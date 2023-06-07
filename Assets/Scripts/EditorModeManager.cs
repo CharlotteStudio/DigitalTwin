@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class BuildManager : MonoBehaviour
+public class EditorModeManager : MonoBehaviour
 {
     [SerializeField] private Transform farmingRoot;
     [SerializeField] private Transform spawnPosition;
@@ -14,14 +15,18 @@ public class BuildManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Button createPlaneButton;
     [SerializeField] private Button saveButton;
+    
+    [Space(10)]
+    [Header("Events")]
+    public UnityEvent OnClickSaveButtonEvents;
 
     private List<GameObject> _planeList = new List<GameObject>();
 
     private void Start()
     {
         createPlaneButton.onClick.AddListener(CreatePlaneObject);
-        saveButton.onClick.AddListener(WriteSave);
-        ReadSave();
+        saveButton.onClick.AddListener(OnClickSaveButton);
+        ReadUserSave();
     }
 
     private void CreatePlaneObject()
@@ -34,25 +39,21 @@ public class BuildManager : MonoBehaviour
         _planeList.Add(Instantiate(fieldGroup_1, vector3, Quaternion.identity, farmingRoot));
     }
 
-    private void ReadSave()
+    private void ReadUserSave()
     {
-        if (PlayerPrefs.HasKey("PlanePosition"))
+        var vectorList = SaveManager.Instance.TryGetPositionSave();
+        vectorList.DebugLog();
+        
+        foreach (var pos in vectorList)
         {
-            string posString = PlayerPrefs.GetString("PlanePosition");
-
-            string[] splitPos = posString.Split(':');
-
-            foreach(var pos in splitPos)
-            {
-                string[] vector = pos.Split(',');
-                
-                if (vector.Length < 3) continue;
-
-                Vector3 position = new Vector3(float.Parse(vector[0]), float.Parse(vector[1]), float.Parse(vector[2]));
-                Debug.Log($"Spawn at {position}");
-                CreatePlaneObject(position);
-            }
+            CreatePlaneObject(pos);
         }
+    }
+
+    private void OnClickSaveButton()
+    {
+        WriteSave();
+        OnClickSaveButtonEvents?.Invoke();
     }
 
     private void WriteSave()
@@ -65,10 +66,7 @@ public class BuildManager : MonoBehaviour
             var pos = plane.transform.position;
             str += $"{pos.x.ToString("F")},{pos.y.ToString("F")},{pos.z.ToString("F")}:";
         }
-        Debug.Log(str);
-        
-        PlayerPrefs.SetString("PlanePosition", str);
-    
-        PlayerPrefs.Save(); 
+        str.DebugLog();
+        SaveManager.Instance.SaveStringData("PlanePosition", str);
     }
 }
