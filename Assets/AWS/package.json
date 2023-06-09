@@ -1,0 +1,19 @@
+{
+    "name": "com.squarebeam.awssdk",
+    "version": "1.20",
+    "displayName": "UnityAWS SDK",
+    "description": "100% C# Code Supports any available platforms based Using Unity's Web Requests",
+    "unity": "2019.4",
+    "keywords": [
+        "sdk",
+        "api",
+        "aws",
+        "web",
+        "networking"
+    ],
+    "author": {
+        "name": "SquareBeam",
+        "email": "squarebeamassets@gmail.com",
+        "url": "https://assetstore.unity.com/publishers/24858"
+    }
+}

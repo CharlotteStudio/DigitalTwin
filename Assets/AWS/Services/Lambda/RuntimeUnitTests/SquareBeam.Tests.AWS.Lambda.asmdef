@@ -1,0 +1,16 @@
+{
+    "name": "SquareBeam.Tests.AWS.Lambda",
+    "references": [
+        "AWSServices"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
