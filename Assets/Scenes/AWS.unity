@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 47326830}
   - component: {fileID: 47326831}
+  - component: {fileID: 47326832}
   m_Layer: 0
   m_Name: AWSManager
   m_TagString: Untagged
@@ -165,6 +166,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e664b98ce7467fe48884e58fa380a414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _LambdaClient: {fileID: 47326832}
+--- !u!114 &47326832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47326829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e717417089b039d44946fe063d3ceab5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &972375335
