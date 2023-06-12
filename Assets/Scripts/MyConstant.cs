@@ -6,8 +6,8 @@ public static class MyConstant
 
     public static class AWSService
     {
-        public const string AccessKey = "AKIA2LAI6V2UE2ASRLBX";
-        public const string SecretKey = "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";
+        public const string AccessKey = "AKIA2LAI6V2UHDIMTQFJ";
+        public const string SecretKey = "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";
         public const string Region = "ap-northeast-1";
         
         public static class LambdaFunction
