@@ -28,10 +28,19 @@ public class AWSManager : MonoBehaviour
             MyConstant.AWSService.Region);
     }
 
-    public void TryGetDeviceCurrentValue()
-    {
+    public void TryGetDeviceState() =>
+        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceState));
+    
+    public void TryGetDeviceActive() =>
+        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceActive));
+    
+    
+    public void TryGetDeviceCurrentValue() =>
         StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceCurrentValue));
-    }
+    
+    public void TryGetDeviceAllValue() =>
+        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceValue));
+    
     
     private IEnumerator InvokeLambda(string lambdaFunctionName)
     {
@@ -50,7 +59,7 @@ public class AWSManager : MonoBehaviour
 
             if (response.Success)
             {
-                $"Success: Response is {response.DownloadHandler.text}".DebugLog();
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
             }
             else
             {
@@ -87,10 +96,28 @@ public class AWSManagerEditor : UnityEditor.Editor
         base.OnInspectorGUI();
         var awsManager = (AWSManager) target;
 
+        if (GUILayout.Button("Try Get Device State"))
+        {
+            awsManager.SetUpLambdaClient();
+            awsManager.TryGetDeviceState();
+        }
+
+        if (GUILayout.Button("Try Get Device Active"))
+        {
+            awsManager.SetUpLambdaClient();
+            awsManager.TryGetDeviceActive();
+        }
+        
         if (GUILayout.Button("Try Get Device Current Value"))
         {
             awsManager.SetUpLambdaClient();
             awsManager.TryGetDeviceCurrentValue();
+        }
+        
+        if (GUILayout.Button("Try Get Device All Value"))
+        {
+            awsManager.SetUpLambdaClient();
+            awsManager.TryGetDeviceAllValue();
         }
     }
 }

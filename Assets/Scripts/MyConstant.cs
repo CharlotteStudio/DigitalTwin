@@ -13,7 +13,10 @@ public static class MyConstant
         public static class LambdaFunction
         {
             public const string GetDeviceCurrentValue = "IBSP_GetDeviceCurrentValue";
-            public const string GetDeviceValue = "";
+            public const string GetDeviceValue = "IBSP_GetDeviceValue";
+            public const string GetDeviceState = "IBSP_GetDeviceState";
+            public const string GetDeviceActive = "IBSP_GetDeviceActive";
+            public const string SetDeviceSetting = "IBSP_SetDeviceSetting";
         }
     }
 }
