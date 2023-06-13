@@ -5,26 +5,6 @@ using UnityEngine;
 using SquareBeam.AWS.Lambda;
 using SquareBeam.AWS.Lambda.Models;
 
-[Serializable]
-public class DeviceCurrentValueReceiver
-{
-    public DeviceMessage[] Items;
-    public int Count;
-    public int ScannedCount;
-}
-[Serializable]
-public class DeviceMessage
-{
-    public string mac_address;
-    public MessageContent message;
-}
-[Serializable]
-public class MessageContent
-{
-    public int deviceType;
-    public int value;
-}
-
 public class AWSManager : MonoBehaviour
 {
     [SerializeField] private LambdaAPI _LambdaClient;
