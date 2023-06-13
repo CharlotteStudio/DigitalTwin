@@ -5,11 +5,9 @@ using UnityEngine;
 using SquareBeam.AWS.Lambda;
 using SquareBeam.AWS.Lambda.Models;
 
-public class AWSManager : MonoBehaviour
+public class AWSManager : ManagerBase<AWSManager>
 {
     [SerializeField] private LambdaAPI _LambdaClient;
-
-    public DeviceCurrentValueReceiver receivedMessage;
     
     void Awake()
     {
@@ -29,41 +27,15 @@ public class AWSManager : MonoBehaviour
             MyConstant.AWSService.SecretKey,
             MyConstant.AWSService.Region);
     }
-    
-    public void GetDeviceCurrentValue()
-    {
-        string payload = "";
 
-        StartCoroutine(InvokeLambda(
-            MyConstant.AWSService.LambdaFunction.GetDeviceCurrentValue,
-            payload,
-            OnReceivedEvent
-            ));
-        
-        void OnReceivedEvent(LambdaResponse response)
-        {
-            if (response.Success)
-            {
-                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
-                receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
-            }
-            else
-                ResponseFail(response);
-        }
-    }
-    
     private void TestingLambdaFunction(string lambdaFunctionName)
     {
         string testFile = "lambda_payload.json";
         string payload = File.ReadAllText(
             Path.Combine(Application.dataPath, "AWS", "Services", "Lambda", "Example", "TestFiles", testFile));
-        
-        StartCoroutine(
-            InvokeLambda(lambdaFunctionName,
-                payload,
-                OnReceivedEvent
-            ));
-        
+
+        InvokeLambdaFunction(lambdaFunctionName, payload, OnReceivedEvent);
+
         void OnReceivedEvent(LambdaResponse response)
         {
             if (response.Success)
@@ -73,13 +45,22 @@ public class AWSManager : MonoBehaviour
         }
     }
     
+    public void InvokeLambdaFunction(string lambdaFunctionName, string payload, Action<LambdaResponse> onReceivedEvent)
+    {
+        StartCoroutine(InvokeLambda(
+            lambdaFunctionName,
+            payload,
+            onReceivedEvent
+        ));
+    }
+
     private IEnumerator InvokeLambda(string lambdaFunctionName, string payload, Action<LambdaResponse> onReceivedEvent)
     {
         var request = new LambdaRequest(lambdaFunctionName, payload, onReceivedEvent);
         yield return _LambdaClient.LambdaInvoke(request);
     }
 
-    private void ResponseFail(LambdaResponse response)
+    public void ResponseFail(LambdaResponse response)
     {
         var exceptionType = response.Exception.GetType();
         $"Failure: {exceptionType} was thrown!".DebugLogError();
@@ -149,12 +130,6 @@ public class AWSManagerEditor : UnityEditor.Editor
         {
             awsManager.SetUpLambdaClient();
             awsManager.TryGetDeviceAllValue();
-        }
-        
-        if (GUILayout.Button("Get to class"))
-        {
-            awsManager.SetUpLambdaClient();
-            awsManager.GetDeviceCurrentValue();
         }
     }
 }

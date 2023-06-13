@@ -2,23 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveManager : MonoBehaviour
+public class SaveManager : ManagerBase<SaveManager>
 {
-    private static SaveManager _instance;
-
-    public static SaveManager Instance
-    {
-        get
-        {
-            if (!_instance)
-            {
-                _instance = FindObjectOfType<SaveManager>();
-            }
-
-            return _instance;
-        }
-    }
-
     public List<Vector3> TryGetPositionSave()
     {
         List<Vector3> vectors = new List<Vector3>();
