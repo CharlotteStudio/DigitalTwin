@@ -27,61 +27,87 @@ public class AWSManager : MonoBehaviour
             MyConstant.AWSService.SecretKey,
             MyConstant.AWSService.Region);
     }
+    
+    public void GetDeviceCurrentValue()
+    {
+        string payload = "";
 
-    public void TryGetDeviceState() =>
-        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceState));
+        StartCoroutine(InvokeLambda(
+            MyConstant.AWSService.LambdaFunction.GetDeviceCurrentValue,
+            payload,
+            OnReceivedEvent
+            ));
+        
+        void OnReceivedEvent(LambdaResponse response)
+        {
+            if (response.Success)
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+            else
+                ResponseFail(response);
+        }
+    }
     
-    public void TryGetDeviceActive() =>
-        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceActive));
-    
-    
-    public void TryGetDeviceCurrentValue() =>
-        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceCurrentValue));
-    
-    public void TryGetDeviceAllValue() =>
-        StartCoroutine(InvokeLambda(MyConstant.AWSService.LambdaFunction.GetDeviceValue));
-    
-    
-    private IEnumerator InvokeLambda(string lambdaFunctionName)
+    private void TestingLambdaFunction(string lambdaFunctionName)
     {
         string testFile = "lambda_payload.json";
         string payload = File.ReadAllText(
             Path.Combine(Application.dataPath, "AWS", "Services", "Lambda", "Example", "TestFiles", testFile));
         
-        var request = new LambdaRequest(lambdaFunctionName, payload)
-        {
-            onDone = OnDone
-        };
+        StartCoroutine(
+            InvokeLambda(lambdaFunctionName,
+                payload,
+                OnReceivedEvent
+            ));
         
-        void OnDone(LambdaResponse baseResponse)
+        void OnReceivedEvent(LambdaResponse response)
         {
-            var response = (LambdaResponse)baseResponse;
-
             if (response.Success)
-            {
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
-            }
             else
-            {
-                var exceptionType = response.Exception.GetType();
-                $"Failure: {exceptionType} was thrown!".DebugLogError();
-
-                if (exceptionType == typeof(LambdaException))
-                {
-                    var exception = (LambdaException)response.Exception;
-
-                    exception.ToString().DebugLogError();
-                }
-                else if (exceptionType == typeof(Exception))
-                {
-                    Debug.LogException(response.Exception);
-                }
-                else
-                    $"Unsupported exception type {exceptionType}".DebugLogError();
-            }
+                ResponseFail(response);
         }
+    }
+    
+    private IEnumerator InvokeLambda(string lambdaFunctionName, string payload, Action<LambdaResponse> onReceivedEvent)
+    {
+        var request = new LambdaRequest(lambdaFunctionName, payload, onReceivedEvent);
         yield return _LambdaClient.LambdaInvoke(request);
     }
+
+    private void ResponseFail(LambdaResponse response)
+    {
+        var exceptionType = response.Exception.GetType();
+        $"Failure: {exceptionType} was thrown!".DebugLogError();
+
+        if (exceptionType == typeof(LambdaException))
+        {
+            var exception = (LambdaException)response.Exception;
+
+            exception.ToString().DebugLogError();
+        }
+        else if (exceptionType == typeof(Exception))
+        {
+            Debug.LogException(response.Exception);
+        }
+        else
+            $"Unsupported exception type {exceptionType}".DebugLogError();
+    }
+
+    #region Editor Testing Methods
+    
+    public void TryGetDeviceState() =>
+        TestingLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceState);
+    
+    public void TryGetDeviceActive() =>
+        TestingLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceActive);
+
+    public void TryGetDeviceCurrentValue() =>
+        TestingLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceCurrentValue);
+    
+    public void TryGetDeviceAllValue() => 
+        TestingLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceValue);
+    
+    #endregion
 }
 
 #region Editor Function
@@ -118,6 +144,12 @@ public class AWSManagerEditor : UnityEditor.Editor
         {
             awsManager.SetUpLambdaClient();
             awsManager.TryGetDeviceAllValue();
+        }
+        
+        if (GUILayout.Button("Get to class"))
+        {
+            awsManager.SetUpLambdaClient();
+            awsManager.GetDeviceCurrentValue();
         }
     }
 }
