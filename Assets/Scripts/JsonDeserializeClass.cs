@@ -1,13 +1,13 @@
 [System.Serializable]
 public class DeviceCurrentValueReceiver
 {
-    public DeviceMessage[] Items;
+    public DeviceInfo[] Items;
     public int Count;
     public int ScannedCount;
 }
 
 [System.Serializable]
-public class DeviceMessage
+public class DeviceInfo
 {
     public string mac_address;
     public MessageContent message;
@@ -17,5 +17,6 @@ public class DeviceMessage
 public class MessageContent
 {
     public int deviceType;
+    public int activeState;
     public int value;
 }

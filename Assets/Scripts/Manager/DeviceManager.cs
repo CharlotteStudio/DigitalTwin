@@ -5,23 +5,119 @@ using UnityEngine;
 
 public class DeviceManager : ManagerBase<DeviceManager>
 {
+    [Header("Devices Spawn Root")]
+    [SerializeField] private Transform _deviceSpawnRoot;
 
-    [Header("Devices")]
-    public List<DeviceMessage> deviceList = new List<DeviceMessage>();
+    [Header("Device Object")]
+    public List<DeviceBase> deviceList = new List<DeviceBase>();
+    
+    [Header("Devices Info")]
+    public List<DeviceInfo> deviceInfoList = new List<DeviceInfo>();
     
     [Header("Receiver")]
     public DeviceCurrentValueReceiver receivedMessage;
+
+    [Header("Devices Prefabs")]
+    [SerializeField] private GameObject _soilDevicePrefab;
+    [SerializeField] private GameObject _pumpDevicePrefab;
+    
     private AWSManager aws => AWSManager.Instance;
-    
-    
+
+    public event System.Action OnGetDeviceStateEvent;
+
     private void Start()
+    {
+        OnGetDeviceStateEvent += SpawnDevices;
+    }
+
+    private void SetUpDeviceInfo()
+    {
+        foreach (var deviceData in receivedMessage.Items)
+        {
+            var isExisted = false;
+            foreach (var deviceInfo in deviceInfoList)
+            {
+                if (deviceInfo.mac_address.Equals(deviceData.mac_address))
+                    isExisted = true;
+            }
+            
+            if (!isExisted)
+                deviceInfoList.Add(deviceData);
+        }
+    }
+
+    public void SpawnDevices()
+    {
+        if (deviceInfoList == null || deviceInfoList.Count == 0)
+        {
+            $"The {nameof(deviceInfoList)} is nothing.".DebugLogWarning();
+            return;
+        }
+        
+        foreach (var deviceInfo in deviceInfoList)
+        {
+            if (IsExistedDevice(deviceInfo)) continue;
+
+            GameObject newDevice;
+            switch (deviceInfo.message.deviceType)
+            {
+                case 1:
+                    newDevice = Instantiate(_soilDevicePrefab, _deviceSpawnRoot);
+                    newDevice.name = $"Soil Device - {deviceInfo.mac_address}";
+                    break;
+                
+                case 2:
+                    newDevice = Instantiate(_pumpDevicePrefab, _deviceSpawnRoot);
+                    newDevice.name = $"Pump Device - {deviceInfo.mac_address}";
+
+                    break;
+                
+                default:
+                    $"Can not find the device type [{deviceInfo.message.deviceType}]".DebugLogError();
+                    return;
+            }
+            
+            var deviceBase = newDevice.GetComponent<DeviceBase>();
+            deviceBase.Init(deviceInfo);
+            deviceList.Add(deviceBase);
+        }
+    }
+
+    private bool IsExistedDevice(DeviceInfo deviceInfo)
+    {
+        var isExisted = false;
+            
+        foreach (var device in deviceList)
+        {
+            if (deviceInfo.mac_address.Equals(device.macAddress))
+                isExisted = true;
+        }
+
+        return isExisted;
+    }
+
+    private void UpdateAllDevices()
     {
         
     }
 
-    private void UpdateAllDevice()
+    public void GetDeviceState()
     {
-        
+        string payload = "";
+
+        aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceState, payload, OnReceivedEvent);
+
+        void OnReceivedEvent(LambdaResponse response)
+        {
+            if (response.Success)
+            {
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+                receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
+                SetUpDeviceInfo();
+            }
+            else
+                aws.ResponseFail(response);
+        }
     }
 
     public void GetCurrentDeviceValue()
@@ -36,11 +132,26 @@ public class DeviceManager : ManagerBase<DeviceManager>
             {
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
-                UpdateAllDevice();
+                UpdateAllDevices();
             }
             else
                 aws.ResponseFail(response);
         }
+    }
+
+    public void ClearAllData()
+    {
+        deviceInfoList.Clear();
+        receivedMessage = null;
+    }
+
+    public void ClearAllDevice()
+    {
+        foreach (var child in deviceList)
+        {
+            DestroyImmediate(child.gameObject);
+        }
+        deviceList.Clear();
     }
 }
 
@@ -56,11 +167,28 @@ public class DeviceManagerEditor : UnityEditor.Editor
         base.OnInspectorGUI();
         var deviceManager = (DeviceManager) target;
 
-        if (GUILayout.Button("Try Get Current Device Value"))
+        GUILayout.Space(10);
+        GUILayout.Label("Editor Function:");
+        if (GUILayout.Button("Try Get Device State"))
+        {
+            AWSManager.Instance.SetUpLambdaClient();
+            deviceManager.GetDeviceState();
+        }
+        
+        if (GUILayout.Button("Spawn Devices"))
+            deviceManager.SpawnDevices();
+        
+        if (GUILayout.Button("Get Current Device Value"))
         {
             AWSManager.Instance.SetUpLambdaClient();
             deviceManager.GetCurrentDeviceValue();
         }
+
+        if (GUILayout.Button("Clear All Device Data"))
+            deviceManager.ClearAllData();
+        
+        if (GUILayout.Button("Remove All Devices"))
+            deviceManager.ClearAllDevice();
     }
 }
 #endif

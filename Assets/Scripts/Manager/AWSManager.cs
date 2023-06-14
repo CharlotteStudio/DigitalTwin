@@ -28,23 +28,6 @@ public class AWSManager : ManagerBase<AWSManager>
             MyConstant.AWSService.Region);
     }
 
-    private void TestingLambdaFunction(string lambdaFunctionName)
-    {
-        string testFile = "lambda_payload.json";
-        string payload = File.ReadAllText(
-            Path.Combine(Application.dataPath, "AWS", "Services", "Lambda", "Example", "TestFiles", testFile));
-
-        InvokeLambdaFunction(lambdaFunctionName, payload, OnReceivedEvent);
-
-        void OnReceivedEvent(LambdaResponse response)
-        {
-            if (response.Success)
-                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
-            else
-                ResponseFail(response);
-        }
-    }
-    
     public void InvokeLambdaFunction(string lambdaFunctionName, string payload, Action<LambdaResponse> onReceivedEvent)
     {
         StartCoroutine(InvokeLambda(
@@ -92,6 +75,23 @@ public class AWSManager : ManagerBase<AWSManager>
     
     public void TryGetDeviceAllValue() => 
         TestingLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceValue);
+    
+    private void TestingLambdaFunction(string lambdaFunctionName)
+    {
+        string testFile = "lambda_payload.json";
+        string payload = File.ReadAllText(
+            Path.Combine(Application.dataPath, "AWS", "Services", "Lambda", "Example", "TestFiles", testFile));
+
+        InvokeLambdaFunction(lambdaFunctionName, payload, OnReceivedEvent);
+
+        void OnReceivedEvent(LambdaResponse response)
+        {
+            if (response.Success)
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+            else
+                ResponseFail(response);
+        }
+    }
     
     #endregion
 }
