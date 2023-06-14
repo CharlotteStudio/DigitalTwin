@@ -131,6 +131,25 @@ public class AWSManagerEditor : UnityEditor.Editor
             awsManager.SetUpLambdaClient();
             awsManager.TryGetDeviceAllValue();
         }
+        
+        if (GUILayout.Button("Try Set Device Setting"))
+        {
+            string payload = "{\"DeviceMac\":\"176:178:28:167:24:192\",\"ActiveState\":1}";
+            awsManager.SetUpLambdaClient();
+            awsManager.InvokeLambdaFunction(
+                MyConstant.AWSService.LambdaFunction.SetDeviceSetting,
+                payload,
+                OnSendOutSuccessEvent
+                );
+            
+            void OnSendOutSuccessEvent(LambdaResponse response)
+            {
+                if (response.Success)
+                    $"Success send out :\n{payload}".DebugLog();
+                else
+                    "Fail send out".DebugLog();
+            }
+        }
     }
 }
 #endif
