@@ -187,6 +187,8 @@ MonoBehaviour:
       deviceType: 0
       activeState: 0
       value: 0
+  text_macAddress: {fileID: 226681402087505321}
+  text_value: {fileID: 226681402201782135}
 --- !u!1 &226681401357423296
 GameObject:
   m_ObjectHideFlags: 0
