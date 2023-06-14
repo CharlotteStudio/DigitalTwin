@@ -175,6 +175,27 @@ public class DeviceManager : ManagerBase<DeviceManager>
         }
     }
 
+    public void SetDeviceActiveState(string macAddress, int value)
+    {
+        string payload = "{\"DeviceMac\":\"";
+        payload += macAddress;
+        payload += "\",\"ActiveState\":";
+        payload += value;
+        payload += "}";
+        
+        $"Send out json : {payload}".DebugLog();
+
+        aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.SetDeviceSetting, payload, OnSendOutSuccessEvent);
+
+        void OnSendOutSuccessEvent(LambdaResponse response)
+        {
+            if (response.Success)
+                $"Success send out :\n{payload}".DebugLog();
+            else
+                "Fail send out".DebugLog();
+        }
+    }
+    
     public void ClearAllData()
     {
         deviceInfoList.Clear();
