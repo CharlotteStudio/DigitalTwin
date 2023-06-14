@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class DeviceManager : ManagerBase<DeviceManager>
 {
+    [Header("Setting")]
+    [Min(5)] public float deviceUpdateFrequency;
+    
     [Header("Devices Spawn Root")]
     [SerializeField] private Transform _deviceSpawnRoot;
 
@@ -24,10 +27,25 @@ public class DeviceManager : ManagerBase<DeviceManager>
     private AWSManager aws => AWSManager.Instance;
 
     public event System.Action OnGetDeviceStateEvent;
-
+    public event System.Action OnGetCurrentDeviceValueEvent;
+    
     private void Start()
     {
         OnGetDeviceStateEvent += SpawnDevices;
+        OnGetDeviceStateEvent += WaitingNextUpdateDevice;
+        OnGetCurrentDeviceValueEvent += WaitingNextUpdateDevice;
+        GetDeviceState();
+    }
+    
+    private void WaitingNextUpdateDevice()
+    {
+        StartCoroutine(co_UpdateDevice());
+        
+        IEnumerator co_UpdateDevice()
+        {
+            yield return new WaitForSeconds(deviceUpdateFrequency);
+            GetCurrentDeviceValue();
+        }
     }
 
     private void SetUpDeviceInfo()
@@ -82,25 +100,41 @@ public class DeviceManager : ManagerBase<DeviceManager>
             deviceList.Add(deviceBase);
         }
     }
-
+    
     private bool IsExistedDevice(DeviceInfo deviceInfo)
     {
         var isExisted = false;
             
         foreach (var device in deviceList)
         {
-            if (deviceInfo.mac_address.Equals(device.macAddress))
+            if (deviceInfo.mac_address.Equals(device.mac_Address))
                 isExisted = true;
         }
 
         return isExisted;
     }
 
-    private void UpdateAllDevices()
+    private void UpdateDeviceValue()
     {
-        
-    }
+        if (deviceList == null || deviceList.Count == 0) return;
 
+        foreach (var deviceData in receivedMessage.Items)
+        {
+            if (!IsExistedDevice(deviceData)) continue;
+            
+            foreach (var info in deviceInfoList)
+            {
+                if (info.mac_address.Equals(deviceData.mac_address))
+                    info.message.value = deviceData.message.value;
+            }
+            foreach (var deviceBase in deviceList)
+            {
+                if (deviceBase.mac_Address.Equals(deviceData.mac_address))
+                    deviceBase.UpdateValue(deviceData);
+            }
+        }
+    }
+    
     public void GetDeviceState()
     {
         string payload = "";
@@ -114,6 +148,7 @@ public class DeviceManager : ManagerBase<DeviceManager>
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
                 SetUpDeviceInfo();
+                OnGetDeviceStateEvent?.Invoke();
             }
             else
                 aws.ResponseFail(response);
@@ -132,7 +167,8 @@ public class DeviceManager : ManagerBase<DeviceManager>
             {
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
-                UpdateAllDevices();
+                UpdateDeviceValue();
+                OnGetCurrentDeviceValueEvent?.Invoke();
             }
             else
                 aws.ResponseFail(response);
