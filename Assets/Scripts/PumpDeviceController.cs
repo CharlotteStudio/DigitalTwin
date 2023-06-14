@@ -29,8 +29,33 @@ public class PumpDeviceController : DeviceBase
         }
     }
     
-    private void ForceActivePumpDevice()
+    public void ForceActivePumpDevice()
     {
-        //DeviceManager.Instance.
+        "On Click Force Active Button".DebugLog();
+        DeviceManager.Instance.SetDeviceActiveState(mac_Address, activeState == 0 ? 1 : 0);
     }
 }
+
+#region Editor Function
+
+#if UNITY_EDITOR
+
+[UnityEditor.CustomEditor(typeof(PumpDeviceController))]
+public class PumpDeviceControllerEditor : UnityEditor.Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        var pumpDevice = (PumpDeviceController) target;
+
+        GUILayout.Space(10);
+        GUILayout.Label("Editor Function:");
+        if (GUILayout.Button("Try Send out Force Active"))
+        {
+            pumpDevice.ForceActivePumpDevice();
+        }
+    }
+}
+#endif
+
+#endregion
