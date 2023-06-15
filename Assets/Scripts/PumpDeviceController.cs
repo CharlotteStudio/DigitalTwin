@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,39 @@ public class PumpDeviceController : DeviceBase
     [SerializeField] private Button button_forceActive;
     [SerializeField] private TMP_Text text_forceActive;
     
+    private Camera _mainCamera = null;
+
+    private bool _down = false;
+    
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (_down) return;
+            
+            _down = true;
+                
+            if (_mainCamera == null) _mainCamera = Camera.main;
+        
+            var onClickPosition = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            Debug.DrawRay(onClickPosition.origin, onClickPosition.direction, Color.green);
+        
+            if (Physics.Raycast(onClickPosition, out RaycastHit hit, 1000))
+            {
+                if (hit.transform.gameObject.name == "ForceButton")
+                {
+                    ForceActivePumpDevice();
+                }
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (!_down) return;
+            _down = false;
+        }
+    }
+
     public override void OnDeviceInit()
     {
         button_forceActive.onClick.AddListener(ForceActivePumpDevice);
