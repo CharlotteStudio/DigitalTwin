@@ -6,7 +6,7 @@ using UnityEngine;
 public class DeviceManager : ManagerBase<DeviceManager>
 {
     [Header("Setting")]
-    [Min(5)] public float deviceUpdateFrequency;
+    [Min(1)] public float deviceUpdateFrequency = 5;
     
     [Header("Devices Spawn Root")]
     [SerializeField] private Transform _deviceSpawnRoot;
