@@ -136,6 +136,8 @@ public class DeviceManager : ManagerBase<DeviceManager>
         }
     }
     
+    #region Get Function
+
     public void GetDeviceState()
     {
         string payload = "";
@@ -176,7 +178,21 @@ public class DeviceManager : ManagerBase<DeviceManager>
         }
     }
 
+    
+    #endregion
+    
     #region Send out Functions
+    
+    public void SetDeviceListenDevice(string macAddress, string targetMacAddress, Action onSuccessCallback = null)
+    {
+        string payload = "{\"DeviceMac\":\"";
+        payload += macAddress;
+        payload += "\",\"ListenDevice\":\"";
+        payload += targetMacAddress;
+        payload += "\"}";
+        
+        SendOutToAWSService(payload, onSuccessCallback);
+    }
     
     public void SetDeviceActiveValue(string macAddress, int value, Action onSuccessCallback = null)
     {
@@ -186,8 +202,6 @@ public class DeviceManager : ManagerBase<DeviceManager>
         payload += value;
         payload += "}";
         
-        $"Send out json : {payload}".DebugLog();
-
         SendOutToAWSService(payload, onSuccessCallback);
     }
     
@@ -198,14 +212,14 @@ public class DeviceManager : ManagerBase<DeviceManager>
         payload += "\",\"ActiveState\":";
         payload += value;
         payload += "}";
-        
-        $"Send out json : {payload}".DebugLog();
 
         SendOutToAWSService(payload, onSuccessCallback);
     }
 
     private void SendOutToAWSService(string payload, Action onSuccessCallback = null)
     {
+        $"Send out json : {payload}".DebugLog();
+        
         aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.SetDeviceSetting, payload, OnSendOutSuccessEvent);
 
         void OnSendOutSuccessEvent(LambdaResponse response)
