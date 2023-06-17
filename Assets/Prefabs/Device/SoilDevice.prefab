@@ -185,8 +185,12 @@ MonoBehaviour:
     mac_address: 
     message:
       deviceType: 0
+      listenDevice: 
+      activeValue: 0
+      activeDuration: 0
       activeState: 0
       value: 0
+      updateSpeed: 0
   text_macAddress: {fileID: 226681402087505321}
   text_value: {fileID: 226681402201782135}
 --- !u!1 &226681401357423296
@@ -362,7 +366,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 4.5}
-  m_SizeDelta: {x: 500, y: 300}
+  m_SizeDelta: {x: 540, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &226681401384602400
 Canvas:

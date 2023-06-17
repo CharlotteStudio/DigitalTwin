@@ -6,6 +6,15 @@ using TMPro;
 
 public class PumpDeviceController : DeviceBase
 {
+    [Header("UI - Listen Device (View)")]
+    [SerializeField] private GameObject _listenDeviceTextObject;
+    [SerializeField] private Button _buttonlistenDeviceText;
+    [SerializeField] private TMP_Text _textlistenDeviceText;
+    
+    [Header("UI - Listen Device (Setting)")]
+    [SerializeField] private GameObject _listenDeviceSettingObject;
+    [SerializeField] private TMP_Dropdown _listenDeviceDropdown;
+    
     [Header("UI - Active Value (View)")]
     [SerializeField] private GameObject _activeValueTextObject;
     [SerializeField] private Button _buttonActiveValueText;
@@ -37,6 +46,8 @@ public class PumpDeviceController : DeviceBase
     {
         _buttonActiveState.onClick.AddListener(ForceActivePumpDevice);
         _textActiveValueText.text = activeValue.ToString();
+        
+        InitListenDeviceButton();
     }
 
     public override void OnValueChange()
@@ -48,7 +59,45 @@ public class PumpDeviceController : DeviceBase
 
     public override void OnSettingChange()
     {
+        _textlistenDeviceText.text = listenDevice;
         _textActiveValueText.text = activeValue.ToString();
+    }
+
+    private void InitListenDeviceButton()
+    {
+        _buttonlistenDeviceText.onClick.AddListener(() =>
+        {
+            "OnClicked Listen Device Text Button.".DebugLog();
+            _listenDeviceTextObject.SetActive(false);
+            _listenDeviceSettingObject.SetActive(true);
+        });
+        
+        _listenDeviceDropdown.AddOptions(DeviceManager.Instance.GetAllSoilDeviceMacAddress());
+        _listenDeviceDropdown.onValueChanged.AddListener(delegate
+        {
+            DropdownValueChanged(_listenDeviceDropdown);
+        });
+
+        _listenDeviceTextObject.SetActive(true);
+        _listenDeviceSettingObject.SetActive(false);
+    }
+    
+    private void DropdownValueChanged(TMP_Dropdown change)
+    {
+        $"Change the mac address is {change.name}".DebugLog();
+                
+        if (change.name.Equals(listenDevice)) return;
+                
+        DeviceManager.Instance.SetDeviceListenDevice(mac_Address, change.name, Callback);
+                
+        _listenDeviceTextObject.SetActive(true);
+        _listenDeviceSettingObject.SetActive(false);
+
+        void Callback()
+        {
+            _deviceInfo.message.listenDevice = change.name;
+            OnSettingChange();
+        }
     }
 
     #region Active Value Button
