@@ -28,6 +28,10 @@ public class PumpDeviceController : DeviceBase
     private void InitButton()
     {
         _button_activeValueText.onClick.AddListener(() =>
+    public override void OnSettingChange()
+    {
+        _textActiveValueText.text = activeValue.ToString();
+    }
         {
             "OnClicked Active Value Text Button.".DebugLog();
             _activeValueTextObject.SetActive(false);

@@ -17,4 +17,8 @@ public class SoilDeviceController : DeviceBase
         text_value.text = value.ToString();
         
     }
+    
+    public override void OnSettingChange()
+    {
+    }
 }

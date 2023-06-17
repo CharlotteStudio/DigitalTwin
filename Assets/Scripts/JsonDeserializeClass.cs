@@ -17,6 +17,10 @@ public class DeviceInfo
 public class MessageContent
 {
     public int deviceType;
+    public string listenDevice;
+    public int activeValue;
+    public int activeDuration;
     public int activeState;
     public int value;
+    public int updateSpeed;
 }
