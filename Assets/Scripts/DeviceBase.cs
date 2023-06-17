@@ -5,6 +5,7 @@ using TMPro;
 public abstract class DeviceBase : MonoBehaviour
 {
     [SerializeField, ReadOnly] protected DeviceInfo _deviceInfo;
+    [Header("UI")]
     [SerializeField] protected TMP_Text text_macAddress;
     
     public string mac_Address => _deviceInfo.mac_address;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,40 +6,48 @@ using TMPro;
 
 public class PumpDeviceController : DeviceBase
 {
-    [SerializeField] private Button button_forceActive;
-    [SerializeField] private TMP_Text text_forceActive;
+    [Header("UI - Active Value (View)")]
+    [SerializeField] private GameObject _activeValueTextObject;
+    [SerializeField] private Button _button_activeValueText;
     
-    private Camera _mainCamera = null;
+    [Header("UI - Active Value (Setting)")]
+    [SerializeField] private GameObject _activeValueSettingObject;
+    [SerializeField] private Button _button_activeValueConfirm;
+    
+    [SerializeField] private TMP_Text text_forceActive;
+    [SerializeField] private Button button_forceActive;
+    
+    [Header("Object")]
+    [SerializeField] private GameObject vfxObject;
+    
+    private void Start()
+    {
+        InitButton();
+    }
 
-    private bool _down = false;
+    private void InitButton()
+    {
+        _button_activeValueText.onClick.AddListener(() =>
+        {
+            "OnClicked Active Value Text Button.".DebugLog();
+            _activeValueTextObject.SetActive(false);
+            _activeValueSettingObject.SetActive(true);
+        });
+
+        _button_activeValueConfirm.onClick.AddListener(() =>
+        {
+            "OnClicked Active Value Confirm Button.".DebugLog();
+            _activeValueTextObject.SetActive(true);
+            _activeValueSettingObject.SetActive(false);
+        });
+        
+        _activeValueTextObject.SetActive(true);
+        _activeValueSettingObject.SetActive(false);
+    }
     
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (_down) return;
-            
-            _down = true;
-                
-            if (_mainCamera == null) _mainCamera = Camera.main;
-        
-            var onClickPosition = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            Debug.DrawRay(onClickPosition.origin, onClickPosition.direction, Color.green);
-        
-            if (Physics.Raycast(onClickPosition, out RaycastHit hit, 1000))
-            {
-                if (hit.transform.gameObject.name == "ForceButton")
-                {
-                    ForceActivePumpDevice();
-                }
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (!_down) return;
-            _down = false;
-        }
+ 
     }
 
     public override void OnDeviceInit()
@@ -54,19 +61,27 @@ public class PumpDeviceController : DeviceBase
         {
             text_forceActive.text = "Off";
             text_forceActive.color = Color.red;
+            vfxObject.SetActive(false);
         }
         
         if (activeState == 1)
         {
             text_forceActive.text = "On";
             text_forceActive.color = Color.green;
+            vfxObject.SetActive(true);
         }
     }
+
+    private int _onOff = 0;
     
     public void ForceActivePumpDevice()
     {
         "On Click Force Active Button".DebugLog();
-        DeviceManager.Instance.SetDeviceActiveState(mac_Address, activeState == 0 ? 1 : 0);
+        //DeviceManager.Instance.SetDeviceActiveState(mac_Address, activeState == 0 ? 1 : 0);
+        DeviceManager.Instance.SetDeviceActiveState(mac_Address, _onOff);
+        _deviceInfo.message.activeState = _onOff;
+        _onOff = _onOff == 1 ? 0 : 1; 
+        OnValueChange();
     }
 }
 
