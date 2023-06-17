@@ -135,6 +135,23 @@ public class DeviceManager : ManagerBase<DeviceManager>
             }
         }
     }
+
+    public List<string> GetAllSoilDeviceMacAddress()
+    {
+        List<string> macAddress = new List<string>();
+        if (deviceInfoList == null || deviceInfoList.Count == 0)
+        {
+            $"The {nameof(deviceInfoList)} is nothing.".DebugLogWarning();
+        }
+        
+        foreach (var deviceInfo in deviceInfoList)
+        {
+            if (deviceInfo.message.deviceType == 1)
+                macAddress.Add(deviceInfo.mac_address);
+        }
+        
+        return macAddress;
+    }
     
     #region Get Function
 
