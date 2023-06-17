@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : ManagerBase<UIManager>
 {
     [Header("UI")]
     [SerializeField] private Button editorButton;
@@ -11,7 +11,8 @@ public class UIManager : MonoBehaviour
     [Header("Dialog")]
     [SerializeField] private GameObject editorBlock;
     [SerializeField] private GameObject settingBlock;
-
+    [SerializeField] private Dialog _messageDialog;
+    
     
     [Space(10)]
     [Header("Events")]
@@ -44,5 +45,11 @@ public class UIManager : MonoBehaviour
         settingButton.gameObject.SetActive(false);
         settingBlock.SetActive(true);
         OnClickSettingButtonEvents?.Invoke();
+    }
+
+    public void SetMessageDialog(string str)
+    {
+        _messageDialog.SetActiveDialog(str);
+        _messageDialog.gameObject.SetActive(true);
     }
 }
