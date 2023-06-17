@@ -8,45 +8,24 @@ public class PumpDeviceController : DeviceBase
 {
     [Header("UI - Active Value (View)")]
     [SerializeField] private GameObject _activeValueTextObject;
-    [SerializeField] private Button _button_activeValueText;
+    [SerializeField] private Button _buttonActiveValueText;
+    [SerializeField] private TMP_Text _textActiveValueText;
     
     [Header("UI - Active Value (Setting)")]
     [SerializeField] private GameObject _activeValueSettingObject;
-    [SerializeField] private Button _button_activeValueConfirm;
+    [SerializeField] private TMP_InputField _inputFieldActiveValue;
+    [SerializeField] private Button _buttonActiveValueConfirm;
     
-    [SerializeField] private TMP_Text text_forceActive;
-    [SerializeField] private Button button_forceActive;
+    [Header("UI - Active State")]
+    [SerializeField] private Button _buttonActiveState;
+    [SerializeField] private TMP_Text _textActiveState;
     
     [Header("Object")]
     [SerializeField] private GameObject vfxObject;
     
     private void Start()
     {
-        InitButton();
-    }
-
-    private void InitButton()
-    {
-        _button_activeValueText.onClick.AddListener(() =>
-    public override void OnSettingChange()
-    {
-        _textActiveValueText.text = activeValue.ToString();
-    }
-        {
-            "OnClicked Active Value Text Button.".DebugLog();
-            _activeValueTextObject.SetActive(false);
-            _activeValueSettingObject.SetActive(true);
-        });
-
-        _button_activeValueConfirm.onClick.AddListener(() =>
-        {
-            "OnClicked Active Value Confirm Button.".DebugLog();
-            _activeValueTextObject.SetActive(true);
-            _activeValueSettingObject.SetActive(false);
-        });
-        
-        _activeValueTextObject.SetActive(true);
-        _activeValueSettingObject.SetActive(false);
+        InitActiveValueButton();
     }
     
     private void Update()
@@ -56,37 +35,103 @@ public class PumpDeviceController : DeviceBase
 
     public override void OnDeviceInit()
     {
-        button_forceActive.onClick.AddListener(ForceActivePumpDevice);
+        _buttonActiveState.onClick.AddListener(ForceActivePumpDevice);
+        _textActiveValueText.text = activeValue.ToString();
     }
 
     public override void OnValueChange()
     {
-        if (activeState == 0)
+        UpdateActiveStateText();
+        UpdateVFX();
+        _buttonActiveState.interactable = true;
+    }
+
+    public override void OnSettingChange()
+    {
+        _textActiveValueText.text = activeValue.ToString();
+    }
+
+    #region Active Value Button
+    
+    private void InitActiveValueButton()
+    {
+        _buttonActiveValueText.onClick.AddListener(() =>
         {
-            text_forceActive.text = "Off";
-            text_forceActive.color = Color.red;
-            vfxObject.SetActive(false);
-        }
+            "OnClicked Active Value Text Button.".DebugLog();
+            _activeValueTextObject.SetActive(false);
+            _activeValueSettingObject.SetActive(true);
+        });
+
+        _buttonActiveValueConfirm.onClick.AddListener(OnClickedActiveValueConfirmAction);
         
-        if (activeState == 1)
+        _activeValueTextObject.SetActive(true);
+        _activeValueSettingObject.SetActive(false);
+    }
+
+    private void OnClickedActiveValueConfirmAction()
+    {
+        "OnClicked Active Value Confirm Button.".DebugLog();
+        _activeValueTextObject.SetActive(true);
+        _activeValueSettingObject.SetActive(false);
+
+        if (!int.TryParse(_inputFieldActiveValue.text, out int newValue) || newValue is < 0 or > 4000)
         {
-            text_forceActive.text = "On";
-            text_forceActive.color = Color.green;
-            vfxObject.SetActive(true);
+            $"Wrong Input : [{newValue}]".DebugLogWarning();
+                
+            if (UIManager.Instance != null)
+                UIManager.Instance.SetMessageDialog("Please input the value between 0 to 4000");
+                
+            return;
+        }
+        DeviceManager.Instance.SetDeviceActiveValue(mac_Address, newValue, Callback);
+
+        void Callback()
+        {
+            _deviceInfo.message.activeValue = newValue;
+            OnSettingChange();
         }
     }
 
-    private int _onOff = 0;
+    #endregion
+    
+    #region Active State Button
+
+    public void OnPinterEnterButtonState()
+    {
+        if (!_buttonActiveState.interactable) return;
+        
+        _textActiveState.text  = activeState == 1 ? "Force OFF" : "Force ON";
+        _textActiveState.color = activeState == 1 ? Color.red : Color.green;
+    }
+
+    public void OnPinterExitButtonState()
+    {
+        if (!_buttonActiveState.interactable) return;
+        
+        UpdateActiveStateText();
+    }
+
+    private void UpdateActiveStateText()
+    {
+        _textActiveState.text  = activeState == 1 ? "ON" : "OFF";
+        _textActiveState.color = activeState == 1 ? Color.green : Color.red;
+    }
+
+    private void UpdateVFX() =>
+        vfxObject.SetActive(activeState == 1);
+    
     
     public void ForceActivePumpDevice()
     {
-        "On Click Force Active Button".DebugLog();
-        //DeviceManager.Instance.SetDeviceActiveState(mac_Address, activeState == 0 ? 1 : 0);
-        DeviceManager.Instance.SetDeviceActiveState(mac_Address, _onOff);
-        _deviceInfo.message.activeState = _onOff;
-        _onOff = _onOff == 1 ? 0 : 1; 
-        OnValueChange();
+        "OnClicked Force Active Button".DebugLog();
+        DeviceManager.Instance.SetDeviceActiveState(mac_Address, activeState == 1 ? 0 : 1);
+        
+        _textActiveState.text = "Loading...";
+        _textActiveState.color = Color.white;
+        _buttonActiveState.interactable = false;
     }
+
+    #endregion
 }
 
 #region Editor Function
