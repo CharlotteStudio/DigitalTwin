@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SquareBeam.AWS.Lambda.Models;
@@ -175,7 +176,22 @@ public class DeviceManager : ManagerBase<DeviceManager>
         }
     }
 
-    public void SetDeviceActiveState(string macAddress, int value)
+    #region Send out Functions
+    
+    public void SetDeviceActiveValue(string macAddress, int value, Action onSuccessCallback = null)
+    {
+        string payload = "{\"DeviceMac\":\"";
+        payload += macAddress;
+        payload += "\",\"ActiveValue\":";
+        payload += value;
+        payload += "}";
+        
+        $"Send out json : {payload}".DebugLog();
+
+        SendOutToAWSService(payload, onSuccessCallback);
+    }
+    
+    public void SetDeviceActiveState(string macAddress, int value, Action onSuccessCallback = null)
     {
         string payload = "{\"DeviceMac\":\"";
         payload += macAddress;
@@ -185,16 +201,26 @@ public class DeviceManager : ManagerBase<DeviceManager>
         
         $"Send out json : {payload}".DebugLog();
 
+        SendOutToAWSService(payload, onSuccessCallback);
+    }
+
+    private void SendOutToAWSService(string payload, Action onSuccessCallback = null)
+    {
         aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.SetDeviceSetting, payload, OnSendOutSuccessEvent);
 
         void OnSendOutSuccessEvent(LambdaResponse response)
         {
             if (response.Success)
+            {
                 $"Success send out :\n{payload}".DebugLog();
+                onSuccessCallback?.Invoke();
+            }
             else
                 "Fail send out".DebugLog();
         }
     }
+
+    #endregion
     
     public void ClearAllData()
     {
