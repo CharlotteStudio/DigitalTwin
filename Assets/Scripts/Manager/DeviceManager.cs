@@ -28,12 +28,13 @@ public class DeviceManager : ManagerBase<DeviceManager>
     private AWSManager aws => AWSManager.Instance;
 
     public event System.Action OnGetDeviceStateEvent;
+    public event System.Action OnSpawnedDeviceEvent;
     public event System.Action OnGetCurrentDeviceValueEvent;
-    
+
     private void Start()
     {
-        OnGetDeviceStateEvent += SpawnDevices;
-        OnGetDeviceStateEvent += WaitingNextUpdateDevice;
+        OnGetDeviceStateEvent        += SpawnDevices;
+        OnSpawnedDeviceEvent         += GetCurrentDeviceValue;
         OnGetCurrentDeviceValueEvent += WaitingNextUpdateDevice;
         GetDeviceState();
     }
@@ -100,6 +101,7 @@ public class DeviceManager : ManagerBase<DeviceManager>
             deviceBase.Init(deviceInfo);
             deviceList.Add(deviceBase);
         }
+        OnSpawnedDeviceEvent?.Invoke();
     }
     
     private bool IsExistedDevice(DeviceInfo deviceInfo)
