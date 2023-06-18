@@ -954,86 +954,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 792aca934167d9142a1e395a6e2fbb64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deviceUpdateFrequency: 2
+  deviceUpdateFrequency: 60
   _deviceSpawnRoot: {fileID: 2102096986}
   deviceList: []
-  deviceInfoList:
-  - mac_address: 120:33:132:225:22:76
-    message:
-      deviceType: 2
-      listenDevice: 
-      activeValue: 0
-      activeDuration: 0
-      activeState: 0
-      value: 0
-      updateSpeed: 0
-  - mac_address: 176:178:28:166:252:228
-    message:
-      deviceType: 1
-      listenDevice: 
-      activeValue: 0
-      activeDuration: 0
-      activeState: 0
-      value: 0
-      updateSpeed: 0
-  - mac_address: 120:33:132:224:254:84
-    message:
-      deviceType: 1
-      listenDevice: 
-      activeValue: 0
-      activeDuration: 0
-      activeState: 0
-      value: 0
-      updateSpeed: 0
-  - mac_address: 176:178:28:167:24:192
-    message:
-      deviceType: 2
-      listenDevice: 
-      activeValue: 0
-      activeDuration: 0
-      activeState: 0
-      value: 0
-      updateSpeed: 0
+  deviceInfoList: []
   receivedMessage:
-    Items:
-    - mac_address: 120:33:132:225:22:76
-      message:
-        deviceType: 2
-        listenDevice: 
-        activeValue: 0
-        activeDuration: 0
-        activeState: 0
-        value: 0
-        updateSpeed: 0
-    - mac_address: 176:178:28:166:252:228
-      message:
-        deviceType: 1
-        listenDevice: 
-        activeValue: 0
-        activeDuration: 0
-        activeState: 0
-        value: 0
-        updateSpeed: 0
-    - mac_address: 120:33:132:224:254:84
-      message:
-        deviceType: 1
-        listenDevice: 
-        activeValue: 0
-        activeDuration: 0
-        activeState: 0
-        value: 0
-        updateSpeed: 0
-    - mac_address: 176:178:28:167:24:192
-      message:
-        deviceType: 2
-        listenDevice: 
-        activeValue: 0
-        activeDuration: 0
-        activeState: 0
-        value: 0
-        updateSpeed: 0
-    Count: 4
-    ScannedCount: 4
+    Items: []
+    Count: 0
+    ScannedCount: 0
   _soilDevicePrefab: {fileID: 226681401186837885, guid: 14a8ebc78dd42d34f88951002fc41e40, type: 3}
   _pumpDevicePrefab: {fileID: 8125501920794880590, guid: 3a81d1097c9c8554d8e3e87e3fc91e7b, type: 3}
 --- !u!4 &340119851
@@ -5049,7 +4977,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraMoveObject: {fileID: 71556534}
-  targetTag: farmingItem
 --- !u!4 &1956188709
 Transform:
   m_ObjectHideFlags: 0
