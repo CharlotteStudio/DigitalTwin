@@ -28,6 +28,9 @@ public class PumpDeviceController : DeviceBase
     [Header("UI - Active State")]
     [SerializeField] private Button _buttonActiveState;
     [SerializeField] private TMP_Text _textActiveState;
+
+    [Header("Camera")]
+    public Transform _cameraTran;
     
     [Header("Object")]
     [SerializeField] private GameObject vfxObject;

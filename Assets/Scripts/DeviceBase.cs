@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public abstract class DeviceBase : MonoBehaviour
