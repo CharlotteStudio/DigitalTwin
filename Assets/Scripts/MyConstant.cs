@@ -3,7 +3,13 @@ public static class MyConstant
     public const string UserName = "testing@gmail.com";
     public const string Password = "123456";
     public const string MainScene = "MainScene";
-
+    
+    public static class SaveKey
+    {
+        public const string FarmlandPosition = "FarmlandPosition";
+        public const string DevicePosition = "DevicePosition";
+    }
+        
     public static class AWSService
     {
         public const string AccessKey = "AKIA2LAI6V2UHDIMTQFJ";
