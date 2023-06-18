@@ -138,18 +138,45 @@ public class DeviceManager : ManagerBase<DeviceManager>
         }
     }
 
+    public void SetDevicePosition(string mac_address, Vector3 position)
+    {
+        if (deviceList == null || deviceList.Count == 0)
+            $"The {nameof(deviceList)} is nothing.".DebugLogWarning();
+
+        foreach (var deviceBase in deviceList)
+        {
+            if (!deviceBase.mac_Address.Equals(mac_address)) continue;
+
+            deviceBase.transform.position = position;
+        }
+        
+        $"Set Device [{mac_address}] to {position}".DebugLog();
+    }
+
+    public List<string> GetAllDeviceMacAddress()
+    {
+        List<string> macAddress = new List<string>();
+        
+        if (deviceList == null || deviceList.Count == 0)
+            $"The {nameof(deviceList)} is nothing.".DebugLogWarning();
+
+        foreach (var deviceBase in deviceList)
+            macAddress.Add(deviceBase.mac_Address);
+        
+        return macAddress;
+    }
+    
     public List<string> GetAllSoilDeviceMacAddress()
     {
         List<string> macAddress = new List<string>();
-        if (deviceInfoList == null || deviceInfoList.Count == 0)
-        {
-            $"The {nameof(deviceInfoList)} is nothing.".DebugLogWarning();
-        }
         
-        foreach (var deviceInfo in deviceInfoList)
+        if (deviceList == null || deviceList.Count == 0)
+            $"The {nameof(deviceList)} is nothing.".DebugLogWarning();
+
+        foreach (var deviceBase in deviceList)
         {
-            if (deviceInfo.message.deviceType == 1)
-                macAddress.Add(deviceInfo.mac_address);
+            if (deviceBase.type == 1)
+                macAddress.Add(deviceBase.mac_Address);
         }
         
         return macAddress;
