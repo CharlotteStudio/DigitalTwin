@@ -48,7 +48,9 @@ public class PumpDeviceController : DeviceBase
     public override void OnDeviceInit()
     {
         _buttonActiveState.onClick.AddListener(ForceActivePumpDevice);
+        _textlistenDeviceText.text = listenDevice;
         _textActiveValueText.text = activeValue.ToString();
+        UpdateActiveStateText();
         
         InitListenDeviceButton();
     }

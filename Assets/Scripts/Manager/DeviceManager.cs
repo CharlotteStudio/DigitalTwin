@@ -262,6 +262,17 @@ public class DeviceManager : ManagerBase<DeviceManager>
         SendOutToAWSService(payload, onSuccessCallback);
     }
 
+    public void SetDeviceUpdateSpeed(string macAddress, int speed, Action onSuccessCallback = null)
+    {
+        string payload = "{\"DeviceMac\":\"";
+        payload += macAddress;
+        payload += "\",\"UpdateSpeed\":";
+        payload += speed;
+        payload += "}";
+        
+        SendOutToAWSService(payload, onSuccessCallback);
+    }
+    
     private void SendOutToAWSService(string payload, Action onSuccessCallback = null)
     {
         $"Send out json : {payload}".DebugLog();
