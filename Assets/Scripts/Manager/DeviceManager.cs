@@ -251,6 +251,17 @@ public class DeviceManager : ManagerBase<DeviceManager>
         SendOutToAWSService(payload, onSuccessCallback);
     }
     
+    public void SetDeviceDuration(string macAddress, int value, Action onSuccessCallback = null)
+    {
+        string payload = "{\"DeviceMac\":\"";
+        payload += macAddress;
+        payload += "\",\"ActiveDuration\":";
+        payload += value;
+        payload += "}";
+        
+        SendOutToAWSService(payload, onSuccessCallback);
+    }
+
     public void SetDeviceActiveState(string macAddress, int value, Action onSuccessCallback = null)
     {
         string payload = "{\"DeviceMac\":\"";

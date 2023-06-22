@@ -25,6 +25,16 @@ public class PumpDeviceController : DeviceBase
     [SerializeField] private TMP_InputField _inputFieldActiveValue;
     [SerializeField] private Button _buttonActiveValueConfirm;
     
+    [Header("UI - Duration (View)")]
+    [SerializeField] private GameObject _durationTextObject;
+    [SerializeField] private Button _buttonDurationText;
+    [SerializeField] private TMP_Text _textDurationText;
+    
+    [Header("UI - Duration (Setting)")]
+    [SerializeField] private GameObject _durationSettingObject;
+    [SerializeField] private TMP_InputField _inputFieldDuration;
+    [SerializeField] private Button _buttonDurationConfirm;
+    
     [Header("UI - Active State")]
     [SerializeField] private Button _buttonActiveState;
     [SerializeField] private TMP_Text _textActiveState;
@@ -38,11 +48,7 @@ public class PumpDeviceController : DeviceBase
     private void Start()
     {
         InitActiveValueButton();
-    }
-    
-    private void Update()
-    {
- 
+        InitDurationButton();
     }
 
     public override void OnDeviceInit()
@@ -52,7 +58,7 @@ public class PumpDeviceController : DeviceBase
         _textActiveValueText.text = activeValue.ToString();
         UpdateActiveStateText();
         
-        InitListenDeviceButton();
+        DeviceManager.Instance.OnSpawnedDeviceEvent += InitListenDeviceButton;
     }
 
     public override void OnValueChange()
@@ -66,6 +72,7 @@ public class PumpDeviceController : DeviceBase
     {
         _textlistenDeviceText.text = listenDevice;
         _textActiveValueText.text = activeValue.ToString();
+        _textDurationText.text = activeDuration + " s";
     }
 
     private void InitListenDeviceButton()
@@ -142,6 +149,49 @@ public class PumpDeviceController : DeviceBase
         void Callback()
         {
             _deviceInfo.message.activeValue = newValue;
+            OnSettingChange();
+        }
+    }
+
+    #endregion
+    
+    #region Duration Button
+    
+    private void InitDurationButton()
+    {
+        _buttonDurationText.onClick.AddListener(() =>
+        {
+            "OnClicked Duration Text Button.".DebugLog();
+            _durationTextObject.SetActive(false);
+            _durationSettingObject.SetActive(true);
+        });
+
+        _buttonDurationConfirm.onClick.AddListener(OnClickedDurationConfirmAction);
+        
+        _durationTextObject.SetActive(true);
+        _durationSettingObject.SetActive(false);
+    }
+
+    private void OnClickedDurationConfirmAction()
+    {
+        "OnClicked Duration Confirm Button.".DebugLog();
+        _durationTextObject.SetActive(true);
+        _durationSettingObject.SetActive(false);
+
+        if (!int.TryParse(_inputFieldDuration.text, out int newValue) || newValue < 1)
+        {
+            $"Wrong Input : [{newValue}]".DebugLogWarning();
+                
+            if (UIManager.Instance != null)
+                UIManager.Instance.SetMessageDialog("Please input the value bigger than 0");
+                
+            return;
+        }
+        DeviceManager.Instance.SetDeviceDuration(mac_Address, newValue, Callback);
+
+        void Callback()
+        {
+            _deviceInfo.message.activeDuration = newValue;
             OnSettingChange();
         }
     }
