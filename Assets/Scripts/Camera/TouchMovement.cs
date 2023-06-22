@@ -4,10 +4,10 @@ namespace TouchSample
 {
     public class TouchMovement : MonoBehaviour
     {
+        [SerializeField] private Camera _mainCamera;
         [SerializeField] [Min(1)] private int _touchCount = 1;
         [SerializeField] private float _moveSpeed = 0.05f;
 
-        private Camera _mainCamera;
         private Vector3 _startPosition; 
 
         private void OnEnable()

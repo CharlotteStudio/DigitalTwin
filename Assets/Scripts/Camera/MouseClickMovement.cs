@@ -8,10 +8,10 @@ namespace InputSample
     /// </summary>
     public class MouseClickMovement : MonoBehaviour
     {
+        [SerializeField] private Camera _mainCamera = null;
         [SerializeField] private MouseClickType _clickType = MouseClickType.LeftClick;
         [SerializeField] private float _cameraSpeed = 0.1f;
         
-        private Camera _mainCamera = null;
         private Vector3 _startPosition; 
         
         private void OnEnable()
