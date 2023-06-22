@@ -4,10 +4,7 @@ public class DragObjectController : MonoBehaviour
 {
     private const string TargetTag = "farmingItem";
     private const string DeviceTag = "device";
-    
-    [SerializeField] private GameObject cameraMoveObject;
-    
-    private Camera _mainCamera = null;
+    [SerializeField] private Camera _mainCamera = null;
     private GameObject _selectedObject = null;
 
     private void Update()
@@ -20,14 +17,10 @@ public class DragObjectController : MonoBehaviour
         if (_selectedObject != null)
         {
             UpdateSelectedObjectPosition();
-            
-            if (cameraMoveObject.activeSelf)
-                cameraMoveObject.SetActive(false);
         }
         
         if (Input.GetMouseButtonUp(0))
         {
-            cameraMoveObject.SetActive(true);
             _selectedObject = null;
         }
     }
