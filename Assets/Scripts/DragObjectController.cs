@@ -27,9 +27,12 @@ public class DragObjectController : MonoBehaviour
     
     private GameObject GetOnClickSelectedObject()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.touchCount == 1)
         {
-            var onClickPosition = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            var onClickPosition = Input.GetMouseButtonDown(0) ?
+                _mainCamera.ScreenPointToRay(Input.mousePosition) :
+                _mainCamera.ScreenPointToRay(Input.touches[0].position);
+            
             onClickPosition.origin.DrawDebugRay(onClickPosition.direction * 100);
 
             if (Physics.Raycast(onClickPosition, out RaycastHit hit, 1000))
@@ -44,7 +47,10 @@ public class DragObjectController : MonoBehaviour
 
     private void UpdateSelectedObjectPosition()
     {
-        var onClickPosition = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        var onClickPosition = Input.touchCount > 0 ?
+            _mainCamera.ScreenPointToRay(Input.touches[0].position) :
+            _mainCamera.ScreenPointToRay(Input.mousePosition);
+        
         onClickPosition.origin.DrawDebugRay(onClickPosition.direction * 100);
         
         if (Physics.Raycast(onClickPosition, out RaycastHit hit, 1000))
