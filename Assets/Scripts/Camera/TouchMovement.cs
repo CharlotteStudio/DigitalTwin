@@ -4,7 +4,7 @@ namespace TouchSample
 {
     public class TouchMovement : MonoBehaviour
     {
-        [SerializeField] private Camera _mainCamera;
+        private Camera _mainCamera;
         [SerializeField] [Min(1)] private int _touchCount = 1;
         [SerializeField] private float _moveSpeed = 0.05f;
 
@@ -15,7 +15,8 @@ namespace TouchSample
             if (_mainCamera == null)
                 _mainCamera = Camera.main;
         }
-        
+        private void OnDisable() => _mainCamera = null;
+
         private void Update()
         {
             if (Input.touchCount != _touchCount) return;

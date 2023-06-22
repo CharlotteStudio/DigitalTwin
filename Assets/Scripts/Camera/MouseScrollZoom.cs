@@ -4,7 +4,7 @@ namespace InputSample
 {
     public class MouseScrollZoom : MonoBehaviour
     {
-        [SerializeField] private Camera _mainCamera = null;
+        private Camera _mainCamera = null;
         [SerializeField] private float _scrollSpeed = 0.3f;
     
         private void OnEnable()
@@ -12,6 +12,7 @@ namespace InputSample
             if (_mainCamera == null)
                 _mainCamera = Camera.main;
         }
+        private void OnDisable() => _mainCamera = null;
 
         private void Update()
         {
