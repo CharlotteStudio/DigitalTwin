@@ -34,6 +34,7 @@ public class DeviceManager : ManagerBase<DeviceManager>
     private void Start()
     {
         OnGetDeviceStateEvent        += SpawnDevices;
+        OnSpawnedDeviceEvent         += GetDeviceSetting;
         OnSpawnedDeviceEvent         += GetCurrentDeviceValue;
         OnGetCurrentDeviceValueEvent += WaitingNextUpdateDevice;
         GetDeviceState();
@@ -246,6 +247,11 @@ public class DeviceManager : ManagerBase<DeviceManager>
             if (response.Success)
             {
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+                if (response.DownloadHandler.text.Equals("") || response.DownloadHandler.text.Equals("null"))
+                {
+                    "Can not get anything".DebugLogWarning();
+                    return;
+                }
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
                 SetUpDeviceInfo();
                 OnGetDeviceStateEvent?.Invoke();
@@ -266,16 +272,21 @@ public class DeviceManager : ManagerBase<DeviceManager>
             if (response.Success)
             {
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+                if (response.DownloadHandler.text.Equals("") || response.DownloadHandler.text.Equals("null"))
+                {
+                    "Can not get anything".DebugLogWarning();
+                    return;
+                }
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
                 UpdateDeviceValue();
-                GetCurrentDeviceActive();
+                GetDeviceActive();
             }
             else
                 aws.ResponseFail(response);
         }
     }
     
-    public void GetCurrentDeviceActive()
+    public void GetDeviceActive()
     {
         string payload = "";
 
@@ -286,6 +297,11 @@ public class DeviceManager : ManagerBase<DeviceManager>
             if (response.Success)
             {
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+                if (response.DownloadHandler.text.Equals("") || response.DownloadHandler.text.Equals("null"))
+                {
+                    "Can not get anything".DebugLogWarning();
+                    return;
+                }
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
                 UpdateDeviceActiveState();
                 OnGetCurrentDeviceValueEvent?.Invoke();
