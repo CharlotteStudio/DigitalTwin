@@ -1,11 +1,11 @@
 public static class MyConstant
 {
-    public const string UserName = "testing@gmail.com";
-    public const string Password = "123456";
     public const string MainScene = "MainScene";
     
     public static class SaveKey
     {
+        public const string UserName = "UserName";
+        public const string Password = "Password";
         public const string FarmlandPosition = "FarmlandPosition";
         public const string DevicePosition = "DevicePosition";
     }
@@ -18,6 +18,7 @@ public static class MyConstant
         
         public static class LambdaFunction
         {
+            public const string CheckUser = "IBSP_CheckUser";
             public const string GetDeviceCurrentValue = "IBSP_GetDeviceCurrentValue";
             public const string GetDeviceValue = "IBSP_GetDeviceValue";
             public const string GetDeviceState = "IBSP_GetDeviceState";

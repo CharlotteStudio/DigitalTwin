@@ -56,7 +56,20 @@ public class SaveManager : ManagerBase<SaveManager>
         PlayerPrefs.Save(); 
     }
 
-    public void DeletedSave() => PlayerPrefs.DeleteAll();
+    public string ReadStringData(string key)
+    {
+        if (!PlayerPrefs.HasKey(key)) return "";
+
+        return PlayerPrefs.GetString(key);
+    }
+
+    public void DeleteSave(string key)
+    {
+        if (!PlayerPrefs.HasKey(key)) return;
+        PlayerPrefs.DeleteKey(key);
+    }
+    
+    public void DeleteSave() => PlayerPrefs.DeleteAll();
     
 }
 
@@ -76,7 +89,7 @@ public class SaveManagerEditor : UnityEditor.Editor
         GUILayout.Label("Editor Function:");
         if (GUILayout.Button("Remove All Save"))
         {
-            saveManager.DeletedSave();
+            saveManager.DeleteSave();
         }
     }
 }
