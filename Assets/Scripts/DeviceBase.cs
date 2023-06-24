@@ -49,6 +49,17 @@ public abstract class DeviceBase : MonoBehaviour
         OnValueChange();
     }
     
+    public void UpdateActiveState(DeviceInfo deviceInfo)
+    {
+        if (!mac_Address.Equals(deviceInfo.mac_address))
+        {
+            $"The mac address is not match !\nDevice Mac Address : {mac_Address}\nIncome Mac Address : {deviceInfo.mac_address}".DebugLogWarning();
+            return;
+        }
+        _deviceInfo.message.activeState = deviceInfo.message.activeState;
+        OnValueChange();
+    }
+    
     protected abstract void OnDeviceInit();
 
     protected abstract void OnValueChange();

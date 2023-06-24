@@ -117,27 +117,6 @@ public class DeviceManager : ManagerBase<DeviceManager>
         return isExisted;
     }
 
-    private void UpdateDeviceValue()
-    {
-        if (deviceList == null || deviceList.Count == 0) return;
-
-        foreach (var deviceData in receivedMessage.Items)
-        {
-            if (!IsExistedDevice(deviceData)) continue;
-            
-            foreach (var info in deviceInfoList)
-            {
-                if (info.mac_address.Equals(deviceData.mac_address))
-                    info.message.value = deviceData.message.value;
-            }
-            foreach (var deviceBase in deviceList)
-            {
-                if (deviceBase.mac_Address.Equals(deviceData.mac_address))
-                    deviceBase.UpdateValue(deviceData);
-            }
-        }
-    }
-
     public void SetDevicePosition(string mac_address, Vector3 position)
     {
         if (deviceList == null || deviceList.Count == 0)
@@ -152,7 +131,7 @@ public class DeviceManager : ManagerBase<DeviceManager>
         
         $"Set Device [{mac_address}] to {position}".DebugLog();
     }
-
+    
     public List<string> GetAllDeviceMacAddress()
     {
         List<string> macAddress = new List<string>();
@@ -181,6 +160,52 @@ public class DeviceManager : ManagerBase<DeviceManager>
         
         return macAddress;
     }
+    
+    #region Update Device Function
+
+    private void UpdateDeviceValue()
+    {
+        if (deviceList == null || deviceList.Count == 0) return;
+
+        foreach (var deviceData in receivedMessage.Items)
+        {
+            if (!IsExistedDevice(deviceData)) continue;
+            
+            foreach (var info in deviceInfoList)
+            {
+                if (info.mac_address.Equals(deviceData.mac_address))
+                    info.message.value = deviceData.message.value;
+            }
+            foreach (var deviceBase in deviceList)
+            {
+                if (deviceBase.mac_Address.Equals(deviceData.mac_address))
+                    deviceBase.UpdateValue(deviceData);
+            }
+        }
+    }
+    
+    private void UpdateDeviceActiveState()
+    {
+        if (deviceList == null || deviceList.Count == 0) return;
+
+        foreach (var deviceData in receivedMessage.Items)
+        {
+            if (!IsExistedDevice(deviceData)) continue;
+            
+            foreach (var info in deviceInfoList)
+            {
+                if (info.mac_address.Equals(deviceData.mac_address))
+                    info.message.activeState = deviceData.message.activeState;
+            }
+            foreach (var deviceBase in deviceList)
+            {
+                if (deviceBase.mac_Address.Equals(deviceData.mac_address))
+                    deviceBase.UpdateActiveState(deviceData);
+            }
+        }
+    }
+    
+    #endregion
     
     #region Get Function
 
@@ -217,6 +242,26 @@ public class DeviceManager : ManagerBase<DeviceManager>
                 $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
                 UpdateDeviceValue();
+                GetCurrentDeviceActive();
+            }
+            else
+                aws.ResponseFail(response);
+        }
+    }
+    
+    public void GetCurrentDeviceActive()
+    {
+        string payload = "";
+
+        aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceActive, payload, OnReceivedEvent);
+
+        void OnReceivedEvent(LambdaResponse response)
+        {
+            if (response.Success)
+            {
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+                receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
+                UpdateDeviceActiveState();
                 OnGetCurrentDeviceValueEvent?.Invoke();
             }
             else
@@ -224,7 +269,6 @@ public class DeviceManager : ManagerBase<DeviceManager>
         }
     }
 
-    
     #endregion
     
     #region Send out Functions
@@ -347,6 +391,12 @@ public class DeviceManagerEditor : UnityEditor.Editor
         {
             AWSManager.Instance.SetUpLambdaClient();
             deviceManager.GetCurrentDeviceValue();
+        }
+        
+        if (GUILayout.Button("Get Device Active"))
+        {
+            AWSManager.Instance.SetUpLambdaClient();
+            deviceManager.GetCurrentDeviceActive();
         }
 
         if (GUILayout.Button("Clear All Device Data"))
