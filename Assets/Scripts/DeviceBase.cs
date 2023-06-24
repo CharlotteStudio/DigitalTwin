@@ -10,7 +10,7 @@ public abstract class DeviceBase : MonoBehaviour
     public string mac_Address  => _deviceInfo.mac_address;
     public int type            => _deviceInfo.message.deviceType;
     public int value           => _deviceInfo.message.value;
-    public int updateSpeed     => _deviceInfo.message.updateSpeed;
+    public int SetUpdateSpeed     => _deviceInfo.message.setUpdateSpeed;
     public string listenDevice => _deviceInfo.message.listenDevice;
     public int activeValue     => _deviceInfo.message.activeValue;
     public int activeDuration  => _deviceInfo.message.activeDuration;
@@ -34,7 +34,7 @@ public abstract class DeviceBase : MonoBehaviour
         _deviceInfo.message.listenDevice = deviceInfo.message.listenDevice;
         _deviceInfo.message.activeValue = deviceInfo.message.activeValue;
         _deviceInfo.message.activeDuration = deviceInfo.message.activeDuration;
-        _deviceInfo.message.updateSpeed = deviceInfo.message.updateSpeed;
+        _deviceInfo.message.setUpdateSpeed = deviceInfo.message.setUpdateSpeed;
         OnSettingChange();
     }
 

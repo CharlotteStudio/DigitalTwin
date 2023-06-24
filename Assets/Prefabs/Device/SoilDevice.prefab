@@ -426,7 +426,7 @@ MonoBehaviour:
       activeDuration: 0
       activeState: 0
       value: 0
-      updateSpeed: 0
+      setUpdateSpeed: 0
   text_macAddress: {fileID: 226681402087505321}
   _updateSpeedTextObject: {fileID: 8053921616052566053}
   _buttonUpdateSpeedText: {fileID: 7494782473573397942}
@@ -1139,14 +1139,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19
-  m_fontSizeBase: 19
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 4
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

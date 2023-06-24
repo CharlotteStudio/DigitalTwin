@@ -220,7 +220,8 @@ public class DeviceManager : ManagerBase<DeviceManager>
                 {
                     info.message.listenDevice = deviceData.message.listenDevice;
                     info.message.activeValue = deviceData.message.activeValue;
-                    info.message.updateSpeed = deviceData.message.updateSpeed;
+                    info.message.activeDuration = deviceData.message.activeDuration;
+                    info.message.setUpdateSpeed = deviceData.message.setUpdateSpeed;
                 }
             }
 

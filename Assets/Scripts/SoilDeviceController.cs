@@ -20,11 +20,10 @@ public class SoilDeviceController : DeviceBase
     [SerializeField] protected TMP_Text text_value;
     
     
-    
     protected override void OnDeviceInit()
     {
         text_value.text = value.ToString();
-        _textUpdateSpeedText.text = updateSpeed.ToString();
+        _textUpdateSpeedText.text = SetUpdateSpeed.ToString();
         InitUpdateSpeedButton();
     }
 
@@ -35,7 +34,7 @@ public class SoilDeviceController : DeviceBase
     
     protected override void OnSettingChange()
     {
-        _textUpdateSpeedText.text = updateSpeed.ToString();
+        _textUpdateSpeedText.text = SetUpdateSpeed.ToString();
     }
     
     private void InitUpdateSpeedButton()
@@ -72,7 +71,7 @@ public class SoilDeviceController : DeviceBase
 
         void Callback()
         {
-            _deviceInfo.message.updateSpeed = newValue;
+            _deviceInfo.message.setUpdateSpeed = newValue;
             OnSettingChange();
         }
     }

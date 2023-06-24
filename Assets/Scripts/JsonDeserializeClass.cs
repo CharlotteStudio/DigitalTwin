@@ -22,5 +22,5 @@ public class MessageContent
     public int activeDuration;
     public int activeState;
     public int value;
-    public int updateSpeed;
+    public int setUpdateSpeed;
 }

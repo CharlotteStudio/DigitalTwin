@@ -1418,37 +1418,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &2907980847042219742
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2760158797685869148}
-  m_Layer: 0
-  m_Name: CameraPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2760158797685869148
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2907980847042219742}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: -3.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8125501920794880588}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2957727859940671387
 GameObject:
   m_ObjectHideFlags: 0
@@ -5101,7 +5070,6 @@ Transform:
   - {fileID: 8125501920615969814}
   - {fileID: 8128266189909320282}
   - {fileID: 8125501920553159808}
-  - {fileID: 2760158797685869148}
   - {fileID: 1870811566290755349}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -5127,7 +5095,7 @@ MonoBehaviour:
       activeDuration: 0
       activeState: 0
       value: 0
-      updateSpeed: 0
+      setUpdateSpeed: 0
   text_macAddress: {fileID: 8125501921696471099}
   _listenDeviceTextObject: {fileID: 7373185514523337472}
   _buttonlistenDeviceText: {fileID: 7934203168924518083}
@@ -5142,13 +5110,12 @@ MonoBehaviour:
   _buttonActiveValueConfirm: {fileID: 3660990165179239367}
   _durationTextObject: {fileID: 491291177582900211}
   _buttonDurationText: {fileID: 748729530638219977}
-  _textDurationText: {fileID: 5119188844245610152}
+  _textDurationText: {fileID: 4646705951628642596}
   _durationSettingObject: {fileID: 6445867059601714041}
   _inputFieldDuration: {fileID: 2511543373723247055}
   _buttonDurationConfirm: {fileID: 5529836695450351067}
   _buttonActiveState: {fileID: 7811430391441186346}
   _textActiveState: {fileID: 3107970121754839204}
-  _cameraTran: {fileID: 0}
   vfxObject: {fileID: 8124542306110307710}
 --- !u!65 &796995391120784963
 BoxCollider:
@@ -5591,14 +5558,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19
-  m_fontSizeBase: 19
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 4
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -6445,7 +6412,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4065349098577966, guid: 3de97ffa5eb8c414f9df6753c04ae20b, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4065349098577966, guid: 3de97ffa5eb8c414f9df6753c04ae20b, type: 3}
       propertyPath: m_LocalPosition.x
