@@ -49,9 +49,9 @@ public abstract class DeviceBase : MonoBehaviour
         OnValueChange();
     }
     
-    public abstract void OnDeviceInit();
+    protected abstract void OnDeviceInit();
 
-    public abstract void OnValueChange();
+    protected abstract void OnValueChange();
     
-    public abstract void OnSettingChange();
+    protected abstract void OnSettingChange();
 }

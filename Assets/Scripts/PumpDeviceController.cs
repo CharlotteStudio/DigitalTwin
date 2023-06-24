@@ -51,7 +51,7 @@ public class PumpDeviceController : DeviceBase
         InitDurationButton();
     }
 
-    public override void OnDeviceInit()
+    protected override void OnDeviceInit()
     {
         _buttonActiveState.onClick.AddListener(ForceActivePumpDevice);
         _textlistenDeviceText.text = listenDevice;
@@ -61,14 +61,14 @@ public class PumpDeviceController : DeviceBase
         DeviceManager.Instance.OnSpawnedDeviceEvent += InitListenDeviceButton;
     }
 
-    public override void OnValueChange()
+    protected override void OnValueChange()
     {
         UpdateActiveStateText();
         UpdateVFX();
         _buttonActiveState.interactable = true;
     }
 
-    public override void OnSettingChange()
+    protected override void OnSettingChange()
     {
         _textlistenDeviceText.text = listenDevice;
         _textActiveValueText.text = activeValue.ToString();

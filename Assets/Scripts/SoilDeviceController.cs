@@ -21,19 +21,19 @@ public class SoilDeviceController : DeviceBase
     
     
     
-    public override void OnDeviceInit()
+    protected override void OnDeviceInit()
     {
         text_value.text = value.ToString();
         _textUpdateSpeedText.text = updateSpeed.ToString();
         InitUpdateSpeedButton();
     }
 
-    public override void OnValueChange()
+    protected override void OnValueChange()
     {
         text_value.text = value.ToString();
     }
     
-    public override void OnSettingChange()
+    protected override void OnSettingChange()
     {
         _textUpdateSpeedText.text = updateSpeed.ToString();
     }
