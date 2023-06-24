@@ -20,7 +20,7 @@ namespace InputSample
         private void Update()
         {
             if (!Input.GetMouseButton((int) _clickType)) return;
-
+            
             var direction = _rotationDirection switch
             {
                 RotationDirection.LeftRight => Vector3.up,
