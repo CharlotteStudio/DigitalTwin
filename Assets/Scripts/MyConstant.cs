@@ -22,6 +22,7 @@ public static class MyConstant
             public const string GetDeviceValue = "IBSP_GetDeviceValue";
             public const string GetDeviceState = "IBSP_GetDeviceState";
             public const string GetDeviceActive = "IBSP_GetDeviceActive";
+            public const string GetDeviceSetting = "IBSP_GetDeviceSetting";
             public const string SetDeviceSetting = "IBSP_SetDeviceSetting";
         }
     }

@@ -204,6 +204,32 @@ public class DeviceManager : ManagerBase<DeviceManager>
             }
         }
     }
+
+    private void UpdateDeviceSetting()
+    {
+        if (deviceList == null || deviceList.Count == 0) return;
+
+        foreach (var deviceData in receivedMessage.Items)
+        {
+            if (!IsExistedDevice(deviceData)) continue;
+
+            foreach (var info in deviceInfoList)
+            {
+                if (info.mac_address.Equals(deviceData.mac_address))
+                {
+                    info.message.listenDevice = deviceData.message.listenDevice;
+                    info.message.activeValue = deviceData.message.activeValue;
+                    info.message.updateSpeed = deviceData.message.updateSpeed;
+                }
+            }
+
+            foreach (var deviceBase in deviceList)
+            {
+                if (deviceBase.mac_Address.Equals(deviceData.mac_address))
+                    deviceBase.UpdateSetting(deviceData);
+            }
+        }
+    }
     
     #endregion
     
@@ -263,6 +289,30 @@ public class DeviceManager : ManagerBase<DeviceManager>
                 receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
                 UpdateDeviceActiveState();
                 OnGetCurrentDeviceValueEvent?.Invoke();
+            }
+            else
+                aws.ResponseFail(response);
+        }
+    }
+
+    public void GetDeviceSetting()
+    {
+        string payload = "";
+
+        aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.GetDeviceSetting, payload, OnReceivedEvent);
+
+        void OnReceivedEvent(LambdaResponse response)
+        {
+            if (response.Success)
+            {
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+                if (response.DownloadHandler.text.Equals("") || response.DownloadHandler.text.Equals("null"))
+                {
+                    "Can not get anything".DebugLogWarning();
+                    return;
+                }
+                receivedMessage = JsonUtility.FromJson<DeviceCurrentValueReceiver>(response.DownloadHandler.text);
+                UpdateDeviceSetting();
             }
             else
                 aws.ResponseFail(response);
@@ -396,7 +446,13 @@ public class DeviceManagerEditor : UnityEditor.Editor
         if (GUILayout.Button("Get Device Active"))
         {
             AWSManager.Instance.SetUpLambdaClient();
-            deviceManager.GetCurrentDeviceActive();
+            deviceManager.GetDeviceActive();
+        }
+        
+        if (GUILayout.Button("Get Device Setting"))
+        {
+            AWSManager.Instance.SetUpLambdaClient();
+            deviceManager.GetDeviceSetting();
         }
 
         if (GUILayout.Button("Clear All Device Data"))
