@@ -6,46 +6,56 @@ public class SaveManager : ManagerBase<SaveManager>
 {
     public List<Vector3> TryGetFarmlandPositionSave()
     {
-        List<Vector3> vectors = new List<Vector3>();
-
         if (PlayerPrefs.HasKey(MyConstant.SaveKey.FarmlandPosition))
         {
             string posString = PlayerPrefs.GetString(MyConstant.SaveKey.FarmlandPosition);
+            return StringToVector3(posString);
+        }
+        return new List<Vector3>();
+    }
 
-            string[] splitPos = posString.Split(':');
+    public List<Vector3> StringToVector3(string posString)
+    {
+        List<Vector3> vectors = new List<Vector3>();
 
-            foreach(var pos in splitPos)
-            {
-                string[] vector = pos.Split(',');
+        string[] splitPos = posString.Split(':');
+
+        foreach(var pos in splitPos)
+        {
+            string[] vector = pos.Split(',');
                 
-                if (vector.Length < 3) continue;
+            if (vector.Length < 3) continue;
 
-                Vector3 position = new Vector3(float.Parse(vector[0]), float.Parse(vector[1]), float.Parse(vector[2]));
-                vectors.Add(position);
-            }
+            Vector3 position = new Vector3(float.Parse(vector[0]), float.Parse(vector[1]), float.Parse(vector[2]));
+            vectors.Add(position);
         }
         return vectors;
     }
 
     public Dictionary<string, Vector3> TryGetDevicePositionSave()
     {
-        Dictionary<string /*mac address*/, Vector3 /*position*/> dict = new Dictionary<string, Vector3>();
-        
         if (PlayerPrefs.HasKey(MyConstant.SaveKey.DevicePosition))
         {
             string posString = PlayerPrefs.GetString(MyConstant.SaveKey.DevicePosition);
+            return StringToDict(posString);
+        }
+        return new Dictionary<string, Vector3>();
+    }
 
-            string[] splitPos = posString.Split('*');
+    public Dictionary<string, Vector3> StringToDict(string posString)
+    {
+        Dictionary<string /*mac address*/, Vector3 /*position*/> dict = new Dictionary<string, Vector3>();
 
-            foreach(var pos in splitPos)
-            {
-                string[] vector = pos.Split(',');
+        string[] splitPos = posString.Split('*');
+
+        foreach(var pos in splitPos)
+        {
+            string[] vector = pos.Split(',');
                 
-                if (vector.Length < 4) continue;
+            if (vector.Length < 4) continue;
 
-                Vector3 position = new Vector3(float.Parse(vector[1]), float.Parse(vector[2]), float.Parse(vector[3]));
-                dict.Add(vector[0], position);
-            }
+            Vector3 position = new Vector3(float.Parse(vector[1]), float.Parse(vector[2]), float.Parse(vector[3]));
+            dict.Add(vector[0], position);
         }
         return dict;
     }

@@ -75,7 +75,7 @@ public class LoginPageManager : MonoBehaviour
                     else
                         DeleteUser();
                     
-                    
+                    UserProfile.Instance.SetUserName(userName);
                     SceneManager.LoadScene(MyConstant.MainScene);
                 }
                 else
