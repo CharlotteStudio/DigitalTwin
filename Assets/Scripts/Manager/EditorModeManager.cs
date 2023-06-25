@@ -22,6 +22,11 @@ public class EditorModeManager : MonoBehaviour
     [Space(10)]
     [Header("Events")]
     public UnityEvent OnClickSaveButtonEvents;
+    public UnityEvent OnClickCancelButtonEvents;
+    public UnityEvent OnCompletedGetSaveEvents;
+
+    [Space(10)] [Header("Testing")]
+    [SerializeField] private bool _getNullData = false;
 
     private List<GameObject> _planeList = new List<GameObject>();
 
@@ -29,10 +34,9 @@ public class EditorModeManager : MonoBehaviour
     {
         createPlaneButton.onClick.AddListener(CreatePlaneObject);
         saveButton.onClick.AddListener(OnClickSaveButton);
-        ReadSaveFromAWS();
         
         if (DeviceManager.Instance != null)
-            DeviceManager.Instance.OnSpawnedDeviceEvent += ReadDeviceSaveFromAWS;
+            DeviceManager.Instance.OnSpawnedDeviceEvent += ReadSaveFromAWS;
     }
     
     private void OnClickSaveButton()
@@ -73,6 +77,7 @@ public class EditorModeManager : MonoBehaviour
         if (userName.Equals(""))
         {
             "No user name, please check".DebugLogError();
+            OnCompletedGetSaveEvents?.Invoke();
             return;
         }
 
@@ -91,10 +96,12 @@ public class EditorModeManager : MonoBehaviour
                 if (response.DownloadHandler.text.Equals("") || response.DownloadHandler.text.Equals("null"))
                 {
                     "Can not get anything".DebugLogWarning();
+                    OnCompletedGetSaveEvents?.Invoke();
                     return;
                 }
+                
                 response.DownloadHandler.text.DebugLog();
-                if (response.DownloadHandler.text.Equals("\"not find\""))
+                if (response.DownloadHandler.text.Equals("\"not find\"") || _getNullData)
                 {
                     "No Save".DebugLog();
                 }
@@ -108,10 +115,13 @@ public class EditorModeManager : MonoBehaviour
                         CreatePlaneObject(pos);
                     }
                     "Completed Set up farmland position".DebugLog();
+                    ReadDeviceSaveFromAWS();
                 }
             }
             else
                 AWSManager.Instance.ResponseFail(response);
+            
+            OnCompletedGetSaveEvents?.Invoke();
         }
     }
 

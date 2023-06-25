@@ -1,14 +1,18 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using DentedPixel;
 
 public class UIManager : ManagerBase<UIManager>
 {
+    [SerializeField] private Camera _mainCamera;
+    
     [Header("UI")]
     [SerializeField] private Button editorButton;
     [SerializeField] private Button settingButton;
     [SerializeField] private Button returnBackButton;
-
+    [SerializeField] private Image _blackBlock;
+    
     [Header("Dialog")]
     [SerializeField] private GameObject editorBlock;
     [SerializeField] private GameObject settingBlock;
@@ -19,8 +23,7 @@ public class UIManager : ManagerBase<UIManager>
     public UnityEvent OnClickEditorButtonEvents;
     public UnityEvent OnClickSettingButtonEvents;
     public UnityEvent OnClickReturnButtonEvents;
-
-    private Camera _mainCamera;
+    
     private Vector3 _cameraLastPosition = Vector3.zero;
     private Quaternion _cameraLastQuat = Quaternion.identity;
 
@@ -33,6 +36,7 @@ public class UIManager : ManagerBase<UIManager>
         
         editorBlock.SetActive(false);
         settingBlock.SetActive(false);
+        _blackBlock.gameObject.SetActive(true);
         
         editorButton.onClick.AddListener(EnableEditorBlock);
         settingButton.onClick.AddListener(EnableSettingBlock);
@@ -79,5 +83,10 @@ public class UIManager : ManagerBase<UIManager>
     {
         _messageDialog.SetActiveDialog(str);
         _messageDialog.gameObject.SetActive(true);
+    }
+
+    public void DisappearBlackBlock()
+    {
+        _blackBlock.rectTransform.LeanAlpha(0, 1.5f);
     }
 }
