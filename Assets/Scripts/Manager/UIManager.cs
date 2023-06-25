@@ -39,6 +39,7 @@ public class UIManager : ManagerBase<UIManager>
         _mainCamera = Camera.main;
         editorButton.gameObject.SetActive(true);
         settingButton.gameObject.SetActive(true);
+        logoutButton.gameObject.SetActive(true);
         returnBackButton.gameObject.SetActive(false);
         
         editorBlock.SetActive(false);
@@ -56,6 +57,7 @@ public class UIManager : ManagerBase<UIManager>
     {
         editorButton.gameObject.SetActive(false);
         settingButton.gameObject.SetActive(false);
+        logoutButton.gameObject.SetActive(false);
         editorBlock.SetActive(true);
         OnClickEditorButtonEvents?.Invoke();
         // TODO : Change Camera
@@ -65,6 +67,7 @@ public class UIManager : ManagerBase<UIManager>
     {
         editorButton.gameObject.SetActive(false);
         settingButton.gameObject.SetActive(false);
+        logoutButton.gameObject.SetActive(false);
         settingBlock.SetActive(true);
         OnClickSettingButtonEvents?.Invoke();
     }
@@ -73,6 +76,7 @@ public class UIManager : ManagerBase<UIManager>
     {
         editorButton.gameObject.SetActive(false);
         settingButton.gameObject.SetActive(false);
+        logoutButton.gameObject.SetActive(false);
         returnBackButton.gameObject.SetActive(true);
         _cameraLastPosition = _mainCamera.transform.position;
         _cameraLastQuat = _mainCamera.transform.rotation;
@@ -82,6 +86,7 @@ public class UIManager : ManagerBase<UIManager>
     {
         editorButton.gameObject.SetActive(true);
         settingButton.gameObject.SetActive(true);
+        logoutButton.gameObject.SetActive(true);
         returnBackButton.gameObject.SetActive(false);
         _mainCamera.transform.position = _cameraLastPosition;
         _mainCamera.transform.rotation = _cameraLastQuat;

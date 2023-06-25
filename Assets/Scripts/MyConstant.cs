@@ -1,5 +1,6 @@
 public static class MyConstant
 {
+    public const string LoginScene = "Login";
     public const string MainScene = "MainScene";
     
     public static class SaveKey
