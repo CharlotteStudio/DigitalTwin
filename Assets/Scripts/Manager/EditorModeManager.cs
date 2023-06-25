@@ -16,6 +16,7 @@ public class EditorModeManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Button createPlaneButton;
     [SerializeField] private Button saveButton;
+    [SerializeField] private Button cancelButton;
     
     [SerializeField] private SaveItem _saveItem = new SaveItem();
     
@@ -34,6 +35,7 @@ public class EditorModeManager : MonoBehaviour
     {
         createPlaneButton.onClick.AddListener(CreatePlaneObject);
         saveButton.onClick.AddListener(OnClickSaveButton);
+        cancelButton.onClick.AddListener(OnClickCancelButton);
         
         if (DeviceManager.Instance != null)
             DeviceManager.Instance.OnSpawnedDeviceEvent += ReadSaveFromAWS;
@@ -44,6 +46,11 @@ public class EditorModeManager : MonoBehaviour
         // WriteUserFarmlandSave();
         WriteSaveToAWS();
         OnClickSaveButtonEvents?.Invoke();
+    }
+    
+    private void OnClickCancelButton()
+    {
+        OnClickCancelButtonEvents?.Invoke();
     }
 
     private void CreatePlaneObject()
