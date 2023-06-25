@@ -1,7 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using DentedPixel;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class UIManager : ManagerBase<UIManager>
 {
@@ -10,8 +12,10 @@ public class UIManager : ManagerBase<UIManager>
     [Header("UI")]
     [SerializeField] private Button editorButton;
     [SerializeField] private Button settingButton;
+    [SerializeField] private Button logoutButton;
     [SerializeField] private Button returnBackButton;
     [SerializeField] private Image _blackBlock;
+    [SerializeField] private TMP_Text _loadingText;
     
     [Header("Dialog")]
     [SerializeField] private GameObject editorBlock;
@@ -27,6 +31,9 @@ public class UIManager : ManagerBase<UIManager>
     private Vector3 _cameraLastPosition = Vector3.zero;
     private Quaternion _cameraLastQuat = Quaternion.identity;
 
+    private Coroutine _loadingTextCoroutine;
+
+
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -37,9 +44,11 @@ public class UIManager : ManagerBase<UIManager>
         editorBlock.SetActive(false);
         settingBlock.SetActive(false);
         _blackBlock.gameObject.SetActive(true);
+        _loadingTextCoroutine = StartCoroutine(LoadingTextCoroutine());
         
         editorButton.onClick.AddListener(EnableEditorBlock);
         settingButton.onClick.AddListener(EnableSettingBlock);
+        logoutButton.onClick.AddListener(()=> SceneManager.LoadScene(MyConstant.LoginScene));
         returnBackButton.onClick.AddListener(DisableDeviceView);
     }
 
@@ -87,6 +96,19 @@ public class UIManager : ManagerBase<UIManager>
 
     public void DisappearBlackBlock()
     {
+        StopCoroutine(_loadingTextCoroutine);
+        _loadingText.text = "Completed Loading Save";
         _blackBlock.rectTransform.LeanAlpha(0, 1.5f);
+        Destroy(_blackBlock.gameObject, 1.5f);
+    }
+
+    private IEnumerator LoadingTextCoroutine()
+    {
+        _loadingText.text = "Loading Save ";
+        while (true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            _loadingText.text += ".";
+        }
     }
 }
