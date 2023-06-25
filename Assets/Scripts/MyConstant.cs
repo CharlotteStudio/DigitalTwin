@@ -12,8 +12,8 @@ public static class MyConstant
         
     public static class AWSService
     {
-        public const string AccessKey = "AKIA2LAI6V2UHDIMTQFJ";
-        public const string SecretKey = "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";
+        public const string AccessKey = "Access key had been reflash a new";
+        public const string SecretKey = "The all pass access key has expired";
         public const string Region = "ap-northeast-1";
         
         public static class LambdaFunction
