@@ -17,13 +17,13 @@ public class EditorModeManager : MonoBehaviour
     [SerializeField] private Button createPlaneButton;
     [SerializeField] private Button saveButton;
     
+    [SerializeField] private SaveItem _saveItem = new SaveItem();
+    
     [Space(10)]
     [Header("Events")]
     public UnityEvent OnClickSaveButtonEvents;
 
     private List<GameObject> _planeList = new List<GameObject>();
-
-    [SerializeField] private SaveItem _saveItem = new SaveItem();
 
     private void Start()
     {
@@ -37,8 +37,8 @@ public class EditorModeManager : MonoBehaviour
     
     private void OnClickSaveButton()
     {
-        WriteFarmlandSave();
-        WriteDeviceSave();
+        // WriteUserFarmlandSave();
+        WriteSaveToAWS();
         OnClickSaveButtonEvents?.Invoke();
     }
 
@@ -52,7 +52,8 @@ public class EditorModeManager : MonoBehaviour
         _planeList.Add(Instantiate(fieldGroup_1, vector3, Quaternion.identity, farmingRoot));
     }
 
-    #region Read Write Save
+    
+    #region Read Write Save From AWS
     
     private void ReadSaveFromAWS()
     {
@@ -143,6 +144,52 @@ public class EditorModeManager : MonoBehaviour
         deviceDict.DebugLog();
     }
     
+    private void WriteSaveToAWS()
+    {
+        string userName = "";
+        if (UserProfile.Instance != null)
+        {
+            userName = UserProfile.Instance.GetUserName();
+        }
+        else
+        {
+#if UNITY_EDITOR
+            userName = "testing@gmail.com";
+            "Now is editor mode".DebugLog();
+#endif
+        }
+
+        if (userName.Equals(""))
+        {
+            "No user name, please check".DebugLogError();
+            return;
+        }
+        
+        SaveOperation saveOperation = new SaveOperation();
+        saveOperation.operation = "create";
+        saveOperation.payload.Item.UserName = userName;
+        saveOperation.payload.Item.message.FarmlandPosition = GetFarmlandSaveString();
+        saveOperation.payload.Item.message.DevicePosition = GetDeviceSaveString();
+        string payload = JsonUtility.ToJson(saveOperation);
+        payload.DebugLog();
+        
+        AWSManager.Instance.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.GetSetUserSave, payload, OnReceivedEvent);
+
+        void OnReceivedEvent(LambdaResponse response)
+        {
+            if (response.Success)
+            {
+                $"Success: Response is :\n{response.DownloadHandler.text.ToPrettyPrintJsonString()}".DebugLog();
+            }
+            else
+                AWSManager.Instance.ResponseFail(response);
+        }
+    }
+    
+    #endregion
+    
+    #region Read Write Save
+    
     private void ReadFarmlandPositionSave()
     {
         var vectorList = SaveManager.Instance.TryGetFarmlandPositionSave();
@@ -180,10 +227,16 @@ public class EditorModeManager : MonoBehaviour
         
         "Completed Set up device position".DebugLog();
     }
-
-    private void WriteFarmlandSave()
+    
+    private void WriteUserFarmlandSave()
     {
-        if (_planeList == null || _planeList.Count <= 0) return;
+        SaveManager.Instance.SaveStringData(MyConstant.SaveKey.FarmlandPosition, GetFarmlandSaveString());
+        SaveManager.Instance.SaveStringData(MyConstant.SaveKey.DevicePosition, GetDeviceSaveString());
+    }
+
+    private string GetFarmlandSaveString()
+    {
+        if (_planeList == null || _planeList.Count <= 0) return "";
         
         string str = "";
         foreach(var plane in _planeList)
@@ -192,12 +245,12 @@ public class EditorModeManager : MonoBehaviour
             str += $"{pos.x:F},{pos.y:F},{pos.z:F}:";
         }
         str.DebugLog();
-        SaveManager.Instance.SaveStringData(MyConstant.SaveKey.FarmlandPosition, str);
+        return str;
     }
 
-    private void WriteDeviceSave()
+    private string GetDeviceSaveString()
     {
-        if (DeviceManager.Instance == null || DeviceManager.Instance.deviceList.Count == 0) return;
+        if (DeviceManager.Instance == null || DeviceManager.Instance.deviceList.Count == 0) return "";
         
         string str = "";
         foreach(var deviceBase in DeviceManager.Instance.deviceList)
@@ -206,7 +259,7 @@ public class EditorModeManager : MonoBehaviour
             str += $"{deviceBase.mac_Address},{pos.x:F},{pos.y:F},{pos.z:F}*";
         }
         str.DebugLog();
-        SaveManager.Instance.SaveStringData(MyConstant.SaveKey.DevicePosition, str);
+        return str;
     }
     
     #endregion
