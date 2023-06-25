@@ -11,6 +11,7 @@ public class LoginPageManager : MonoBehaviour
     [SerializeField] private TMP_InputField _passwordInput;
     [SerializeField] private Button _loginButton;
     [SerializeField] private Toggle _toggle;
+    [SerializeField] private Button _exitButton;
 
     [Header("Component")]
     [SerializeField] private Dialog _dialog;
@@ -19,6 +20,7 @@ public class LoginPageManager : MonoBehaviour
     {
         _loginButton.gameObject.SetActive(true);
         _loginButton.onClick.AddListener(CheckLogin);
+        _exitButton.onClick.AddListener(()=> Application.Quit());
         ReadUser();
     }
 
