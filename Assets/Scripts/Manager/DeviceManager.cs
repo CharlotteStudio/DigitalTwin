@@ -388,7 +388,7 @@ public class DeviceManager : ManagerBase<DeviceManager>
     {
         string payload = "{\"DeviceMac\":\"";
         payload += macAddress;
-        payload += "\",\"UpdateSpeed\":";
+        payload += "\",\"SetUpdateSpeed\":";
         payload += speed;
         payload += "}";
         
