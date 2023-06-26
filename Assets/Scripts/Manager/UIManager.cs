@@ -9,13 +9,19 @@ public class UIManager : ManagerBase<UIManager>
 {
     [SerializeField] private Camera _mainCamera;
     
-    [Header("UI")]
+    [Header("UI - Loading")]
+    [SerializeField] private Image _blackBlock;
+    [SerializeField] private TMP_Text _loadingText;
+    
+    [Header("UI - Normal")]
     [SerializeField] private Button editorButton;
     [SerializeField] private Button settingButton;
     [SerializeField] private Button logoutButton;
     [SerializeField] private Button returnBackButton;
-    [SerializeField] private Image _blackBlock;
-    [SerializeField] private TMP_Text _loadingText;
+
+    [Header("UI - Setting")]
+    [SerializeField] private TMP_InputField updateSpeedInputField;
+    [SerializeField] private Button confirmSettingButton;
     
     [Header("Dialog")]
     [SerializeField] private GameObject editorBlock;
@@ -51,6 +57,17 @@ public class UIManager : ManagerBase<UIManager>
         settingButton.onClick.AddListener(EnableSettingBlock);
         logoutButton.onClick.AddListener(()=> SceneManager.LoadScene(MyConstant.LoginScene));
         returnBackButton.onClick.AddListener(DisableDeviceView);
+        confirmSettingButton.onClick.AddListener(() =>
+        {
+            if (!int.TryParse(updateSpeedInputField.text, out int newValue) || newValue < 0)
+            {
+                $"Wrong Input : [{newValue}]".DebugLogWarning();
+                SetMessageDialog("Please input the value bigger than 0");
+                return;
+            }
+            DeviceManager.Instance.deviceUpdateFrequency = newValue;
+            DisableSettingBlock();
+        });
     }
 
     private void EnableEditorBlock()
@@ -70,6 +87,14 @@ public class UIManager : ManagerBase<UIManager>
         logoutButton.gameObject.SetActive(false);
         settingBlock.SetActive(true);
         OnClickSettingButtonEvents?.Invoke();
+    }
+    
+    private void DisableSettingBlock()
+    {
+        editorButton.gameObject.SetActive(true);
+        settingButton.gameObject.SetActive(true);
+        logoutButton.gameObject.SetActive(true);
+        settingBlock.SetActive(false);
     }
 
     public void EnableDeviceView()
