@@ -399,6 +399,9 @@ public class DeviceManager : ManagerBase<DeviceManager>
     {
         $"Send out json : {payload}".DebugLog();
         
+        // long time = System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        // $"Start time is {time}".DebugLogWarning();
+        
         aws.InvokeLambdaFunction(MyConstant.AWSService.LambdaFunction.SetDeviceSetting, payload, OnSendOutSuccessEvent);
 
         void OnSendOutSuccessEvent(LambdaResponse response)

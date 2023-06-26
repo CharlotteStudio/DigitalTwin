@@ -41,6 +41,8 @@ public class PumpDeviceController : DeviceBase
 
     [Header("Object")]
     [SerializeField] private GameObject vfxObject;
+
+    private int _lastActiveState = 0;
     
     private void Start()
     {
@@ -214,6 +216,8 @@ public class PumpDeviceController : DeviceBase
 
     private void UpdateActiveStateText()
     {
+        if (_textActiveState.text.Equals("Loading...") && _lastActiveState == activeState) return;
+            
         _textActiveState.text  = activeState == 1 ? "ON" : "OFF";
         _textActiveState.color = activeState == 1 ? Color.green : Color.red;
     }
@@ -226,7 +230,7 @@ public class PumpDeviceController : DeviceBase
     {
         "OnClicked Force Active Button".DebugLog();
         DeviceManager.Instance.SetDeviceActiveState(mac_Address, activeState == 1 ? 0 : 1);
-        
+        _lastActiveState = activeState;
         _textActiveState.text = "Loading...";
         _textActiveState.color = Color.white;
         _buttonActiveState.interactable = false;

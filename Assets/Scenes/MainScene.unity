@@ -475,12 +475,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 1340791435}
+  _blackBlock: {fileID: 1033025970}
+  _loadingText: {fileID: 1557436714}
   editorButton: {fileID: 1986914160}
   settingButton: {fileID: 1885670675}
   logoutButton: {fileID: 555683665}
   returnBackButton: {fileID: 944824286}
-  _blackBlock: {fileID: 1033025970}
-  _loadingText: {fileID: 1557436714}
+  updateSpeedInputField: {fileID: 188729919}
+  confirmSettingButton: {fileID: 462747465}
   editorBlock: {fileID: 1188161677}
   settingBlock: {fileID: 2135565477}
   _messageDialog: {fileID: 2019051376}
