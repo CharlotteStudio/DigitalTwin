@@ -18,7 +18,8 @@ public class UIManager : ManagerBase<UIManager>
     [SerializeField] private Button settingButton;
     [SerializeField] private Button logoutButton;
     [SerializeField] private Button returnBackButton;
-
+    [SerializeField] private Button arButton;
+    
     [Header("UI - Setting")]
     [SerializeField] private TMP_InputField updateSpeedInputField;
     [SerializeField] private Button confirmSettingButton;
@@ -56,6 +57,7 @@ public class UIManager : ManagerBase<UIManager>
         editorButton.onClick.AddListener(EnableEditorBlock);
         settingButton.onClick.AddListener(EnableSettingBlock);
         logoutButton.onClick.AddListener(()=> SceneManager.LoadScene(MyConstant.LoginScene));
+        arButton.onClick.AddListener(()=> SceneManager.LoadScene(MyConstant.ARScene));
         returnBackButton.onClick.AddListener(DisableDeviceView);
         confirmSettingButton.onClick.AddListener(() =>
         {
