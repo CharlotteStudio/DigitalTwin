@@ -9,10 +9,6 @@ public class UIManager : ManagerBase<UIManager>
 {
     [SerializeField] private Camera _mainCamera;
     
-    [Header("UI - Loading")]
-    [SerializeField] private Image _blackBlock;
-    [SerializeField] private TMP_Text _loadingText;
-    
     [Header("UI - Normal")]
     [SerializeField] private Button editorButton;
     [SerializeField] private Button settingButton;
@@ -38,9 +34,6 @@ public class UIManager : ManagerBase<UIManager>
     private Vector3 _cameraLastPosition = Vector3.zero;
     private Quaternion _cameraLastQuat = Quaternion.identity;
 
-    private Coroutine _loadingTextCoroutine;
-
-
     private void Start()
     {
         _mainCamera = Camera.main;
@@ -51,9 +44,7 @@ public class UIManager : ManagerBase<UIManager>
         
         editorBlock.SetActive(false);
         settingBlock.SetActive(false);
-        _blackBlock.gameObject.SetActive(true);
-        _loadingTextCoroutine = StartCoroutine(LoadingTextCoroutine());
-        
+
         editorButton.onClick.AddListener(EnableEditorBlock);
         settingButton.onClick.AddListener(EnableSettingBlock);
         logoutButton.onClick.AddListener(()=> SceneManager.LoadScene(MyConstant.LoginScene));
@@ -124,23 +115,5 @@ public class UIManager : ManagerBase<UIManager>
     {
         _messageDialog.SetActiveDialog(str);
         _messageDialog.gameObject.SetActive(true);
-    }
-
-    public void DisappearBlackBlock()
-    {
-        StopCoroutine(_loadingTextCoroutine);
-        _loadingText.text = "Completed Loading Save";
-        _blackBlock.rectTransform.LeanAlpha(0, 1.5f);
-        Destroy(_blackBlock.gameObject, 1.5f);
-    }
-
-    private IEnumerator LoadingTextCoroutine()
-    {
-        _loadingText.text = "Loading Save ";
-        while (true)
-        {
-            yield return new WaitForSeconds(0.5f);
-            _loadingText.text += ".";
-        }
     }
 }
